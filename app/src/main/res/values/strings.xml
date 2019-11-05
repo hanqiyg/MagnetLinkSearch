@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">MagnetLinkSearch</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="keywords">keywords</string>
+    <string name="submit">&#160;&#160;Search&#160;&#160;  </string>
+    <string name="of">/</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_search">Search</string>
+    <string name="title_favorite">Favorite</string>
+    <string name="nodata">There is nothing.</string>
+    <string name="error">There is something wrong.</string>
+    <string name="title">Magnet Link Search</string>
+    <string name="quote">
+        > ***Human Knowledge Belongs To The World !***\n
+        &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+        &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+        &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+        &#160;&#160;&#160;---- from \' ***AntiTrust*** \'
+    </string>
+    <string name="input_too_many" formatted="true">No more than %d characters.</string>
+    <string name="click_twice">Press BACK twice to Exit.</string>
+</resources>
