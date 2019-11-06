@@ -1,6 +1,7 @@
 package com.icesoft.magnetlinksearch.fragments;
 
 import android.os.Bundle;
+import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,7 +41,12 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
         adapter = new FavoriteAdapter(mActivity,this);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new SpacesItemDecoration(0,2,0,2));
+        recyclerView.addItemDecoration(new SpacesItemDecoration(
+                getResources().getDimensionPixelSize(R.dimen.item_space_left),
+                getResources().getDimensionPixelSize(R.dimen.item_space_top),
+                getResources().getDimensionPixelSize(R.dimen.item_space_right),
+                getResources().getDimensionPixelSize(R.dimen.item_space_bottom)
+        ));
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setOnLoadMoreListener(this);
     }

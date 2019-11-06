@@ -33,7 +33,6 @@ public abstract class BaseFragment extends Fragment implements OnBackPressedList
             this.mHandler = (IHander) context;
         }
     }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -95,4 +95,14 @@ public class Utils {
             return false;
         }
     }
+
+    public static String secureKeywords(String keywords) {
+        CharSequence[] charSequences = {"+","-","&&","||","!","(",")","{","}","^","\"","~","*","?",":","\\"};
+        for(int i=0;i<charSequences.length;i++){
+            if(keywords.contains(charSequences[i])){
+                keywords.replace(charSequences[i],"");
+            }
+        }
+        return keywords;
+    }
 }

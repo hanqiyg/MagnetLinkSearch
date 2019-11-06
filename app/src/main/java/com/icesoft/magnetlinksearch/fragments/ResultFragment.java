@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -55,7 +56,12 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
         adapter = new ResultAdapter(mActivity,this);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new SpacesItemDecoration(0,2,0,2));
+        recyclerView.addItemDecoration(new SpacesItemDecoration(
+                getResources().getDimensionPixelSize(R.dimen.item_space_left),
+                getResources().getDimensionPixelSize(R.dimen.item_space_top),
+                getResources().getDimensionPixelSize(R.dimen.item_space_right),
+                getResources().getDimensionPixelSize(R.dimen.item_space_bottom)
+        ));
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setOnLoadMoreListener(this);
     }

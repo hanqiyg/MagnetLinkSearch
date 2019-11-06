@@ -70,12 +70,6 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
         v.total.setText(String.valueOf(fragment.q.total));
 
         setFav(v.fav,dao.exist(r.id));
-        v.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ViewUtils.gotoInfoDialogFragment(mActivity,r.id);
-            }
-        });
         v.share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -22,6 +22,9 @@
         &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
         &#160;&#160;&#160;---- from \' ***AntiTrust*** \'
     </string>
-    <string name="input_too_many" formatted="true">No more than %d characters.</string>
+    <string name="input_less" formatted="true">No more than %d characters.</string>
+    <string name="input_more" formatted="true">No Less than %d characters.</string>
     <string name="click_twice">Press BACK twice to Exit.</string>
+    <string name="info_title">File Infomation</string>
+    <string name="description_close">close</string>
 </resources>

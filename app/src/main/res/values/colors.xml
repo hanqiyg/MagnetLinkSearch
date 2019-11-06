@@ -6,5 +6,8 @@
     <color name="up">#000000</color>
     <color name="gray">#666666</color>
     <color name="background">#FFFFFF</color>
-    <color name="name_color">#9999CC</color>
+    <color name="recycler_background">#666666</color>
+    <color name="item_name_background">#009999</color>
+    <color name="item_button_background">#FFFFFF</color>
+
 </resources>

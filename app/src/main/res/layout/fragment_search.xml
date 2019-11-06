@@ -6,16 +6,10 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
     <include layout="@layout/include_title"/>
-    <View android:layout_width="match_parent"
-          android:layout_height="1dp"
-          android:background="@drawable/bg_gradient"
-          android:layout_gravity="center_horizontal"
-          android:layout_marginTop="10dp"
-    />
     <scut.carson_ho.diy_view.SuperEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             app:ic_left_click="@drawable/ic_mode_edit_blue_24dp"
@@ -50,13 +44,9 @@
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginTop="5dp"
+            android:visibility="gone"
+            android:id="@+id/message"
             layout="@layout/include_warning"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            tools:text="test"
-            android:id="@+id/tv_info"/>
     <Button android:id="@+id/btn_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,10 +54,16 @@
             android:text="@string/submit"
             android:drawableStart="@drawable/ic_search_black_24dp"
     />
-    <View android:layout_width="match_parent"
+<!--    <View android:layout_width="match_parent"
           android:layout_height="1dp"
           android:background="@drawable/bg_gradient"
           android:layout_gravity="center_horizontal"
           android:layout_marginTop="10dp"
-    />
+    />-->
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            tools:text="test"
+            android:id="@+id/tv_info"/>
 </LinearLayout>

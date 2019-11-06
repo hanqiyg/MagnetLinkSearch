@@ -69,13 +69,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH>{
         v.no.setText(String.valueOf(position + 1));
         v.total.setText(String.valueOf(fragment.favorite.total));
 
-        setFav(v.fav,dao.exist(r.id));
-        v.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ViewUtils.gotoInfoDialogFragment(mActivity,r.id);
-            }
-        });
+        ViewUtils.setFav(v.fav,dao.exist(r.id));
         v.share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,7 +83,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH>{
         v.fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setFav(v.fav,dao.set(r));
+                ViewUtils.setFav(v.fav,dao.set(r));
                 notifyItemChanged(position);
             }
         });
@@ -108,13 +102,6 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH>{
                 mActivity.startActivity(intent);
             }
         });
-    }
-    public void setFav(ImageView fav, boolean b){
-        if(b){
-            fav.setImageResource(R.drawable.ic_favorite_red_24dp);
-        }else{
-            fav.setImageResource(R.drawable.ic_favorite_black_24dp);
-        }
     }
     @Override
     public int getItemCount() {

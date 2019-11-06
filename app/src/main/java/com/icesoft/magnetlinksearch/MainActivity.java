@@ -8,6 +8,9 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -29,6 +32,7 @@ import com.icesoft.magnetlinksearch.interfaces.OnQueryListener;
 import com.icesoft.magnetlinksearch.models.Favorite;
 import com.icesoft.magnetlinksearch.models.Query;
 import com.icesoft.magnetlinksearch.utils.FileUtils;
+import com.icesoft.magnetlinksearch.utils.KeybordUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,31 +44,36 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "test";
     private long back;
     private OnBackPressedListener backPressedListener;
-    private AdView mAdView;
+
+    protected Unbinder unbinder;
+    @BindView(R.id.adView)
+    protected AdView mAdView;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        unbinder = ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                KeybordUtil.hideKeyboard(MainActivity.this);
+                drawer.openDrawer(GravityCompat.START);
             }
         });
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         initAds();
         mIntent();
@@ -74,12 +83,11 @@ public class MainActivity extends AppCompatActivity
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
+                Log.d(T,"onInitializationComplete");
             }
         });
-        mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-
     }
     public void mIntent(){
         Intent intent = getIntent();
@@ -203,18 +211,18 @@ public class MainActivity extends AppCompatActivity
     public void setBackPressListener(OnBackPressedListener listener) {
         this.backPressedListener = listener;
     }
-    @SuppressWarnings("StatementWithEmptyBody")
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_search) {
+            showFragment(SearchFragment.FRAGMENT_TAG);
+        } else if (id == R.id.nav_fav) {
             Favorite f = new Favorite(Constance.FAVORITE_FROM,Constance.FAVORITE_LIMIT,0,new ArrayList<>());
             FileUtils.writeObject(this,FavoriteFragment.FRAGMENT_TAG,f);
             showFragment(FavoriteFragment.FRAGMENT_TAG);
-        } else if (id == R.id.nav_gallery) {
-
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -224,9 +232,13 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }

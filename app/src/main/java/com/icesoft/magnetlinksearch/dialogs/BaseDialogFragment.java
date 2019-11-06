@@ -8,11 +8,19 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
+import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.icesoft.magnetlinksearch.R;
 
 public abstract class BaseDialogFragment extends DialogFragment {
@@ -20,7 +28,10 @@ public abstract class BaseDialogFragment extends DialogFragment {
     Context mActivity;
     private Bundle bundle;
     private View rootView;
+    @BindView(R.id.adView)
+    protected AdView mAdView;
     protected Unbinder unbinder;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -41,6 +52,10 @@ public abstract class BaseDialogFragment extends DialogFragment {
         Log.d(getName(),"onCreateDialog");
         return super.onCreateDialog(savedInstanceState);
     }
+    public void initAds(){
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+    }
 
     @Nullable
     @Override
@@ -56,6 +71,8 @@ public abstract class BaseDialogFragment extends DialogFragment {
             rootView = inflater.inflate(getLayoutResourceID(),container,false);
         }
         unbinder = ButterKnife.bind(this,rootView);
+
+        initAds();
         initView();
         initData();
         return rootView;
@@ -74,7 +91,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
         WindowManager.LayoutParams mLayoutParams = mWindow.getAttributes();
         mWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mLayoutParams.width =   ViewGroup.LayoutParams.MATCH_PARENT;
-        mLayoutParams.height =  ViewGroup.LayoutParams.WRAP_CONTENT;
+        mLayoutParams.height =  ViewGroup.LayoutParams.MATCH_PARENT;
         mLayoutParams.gravity = Gravity.CENTER;
         mLayoutParams.windowAnimations = R.style.BottomDialogAnimation;
         mWindow.setAttributes(mLayoutParams);

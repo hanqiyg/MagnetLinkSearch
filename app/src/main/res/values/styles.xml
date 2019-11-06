@@ -21,9 +21,9 @@
     <style name="buttons">
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
         <item name="android:gravity">center_vertical|center_horizontal</item>
-        <!--        <item name="android:background">@drawable/shaped_corner</item>-->
-        <item name="android:layout_margin">10dp</item>
     </style>
     <style name="info">
         <item name="android:layout_width">0dp</item>
