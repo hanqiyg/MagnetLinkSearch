@@ -34,13 +34,11 @@ public class TextLengthFilter implements InputFilter {
             //Log.d(T,context.getString(R.string.input_less,max_length));
             message.setText(context.getString(R.string.input_less,max_length));
             rootView.setVisibility(View.VISIBLE);
-            Toast.makeText(context,context.getString(R.string.input_less,max_length),Toast.LENGTH_SHORT).show();
         }else if((dest.length() - (dend - dstart)) + source.length() < min_length){
             //Log.d(T,context.getString(R.string.input_more,min_length));
             message.setText(context.getString(R.string.input_more,min_length));
             rootView.setVisibility(View.VISIBLE);
             submit.setEnabled(false);
-            Toast.makeText(context,context.getString(R.string.input_more,min_length),Toast.LENGTH_SHORT).show();
         }else{
             rootView.setVisibility(View.GONE);
             submit.setEnabled(true);
