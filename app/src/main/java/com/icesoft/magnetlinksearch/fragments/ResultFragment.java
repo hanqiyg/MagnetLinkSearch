@@ -102,15 +102,20 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
                 }
             }
             @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                Log.d(FRAGMENT_TAG,statusCode + ":" + (errorResponse!=null?errorResponse.toString():"null"));
+            }
+
+            @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d(FRAGMENT_TAG,responseString);
+                Log.d(FRAGMENT_TAG,statusCode + ":" + (responseString!=null?responseString:"null"));
                 refreshLayout.finishRefresh(false);
                 hasData(false,getString(R.string.error));
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d(FRAGMENT_TAG,errorResponse!=null?errorResponse.toString():"null");
+                Log.d(FRAGMENT_TAG,statusCode + ":" + (errorResponse!=null?errorResponse.toString():"null"));
                 refreshLayout.finishRefresh(false);
                 hasData(false,getString(R.string.error));
             }
