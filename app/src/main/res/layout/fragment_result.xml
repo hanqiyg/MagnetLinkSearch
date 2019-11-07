@@ -8,20 +8,17 @@
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+    <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/recycler_background"
-            android:overScrollMode="never" />
+            android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/recycler_background"
+                android:layout_centerInParent="true"
+                android:overScrollMode="never" />
+        <include layout="@layout/include_progress"/>
+    </RelativeLayout>
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-<TextView
-    android:id="@+id/empty"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textAlignment="center"
-    android:textSize="20sp"
-    android:layout_centerInParent="true"
-    tools:text="There is nothing."
-/>
 </RelativeLayout>

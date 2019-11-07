@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import com.icesoft.magnetlinksearch.models.Result;
 import com.icesoft.magnetlinksearch.utils.ElasticRestClient;
 import com.icesoft.magnetlinksearch.utils.FileUtils;
 import com.icesoft.magnetlinksearch.utils.Utils;
+import com.icesoft.magnetlinksearch.utils.ViewUtils;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
@@ -36,8 +38,12 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
     RefreshLayout refreshLayout;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    @BindView(R.id.empty)
-    TextView empty;
+
+    @BindView(R.id.message)
+    TextView message;
+    @BindView(R.id.progress)
+    ProgressBar progress;
+
     public Query q;
     private ResultAdapter adapter;
 
@@ -68,7 +74,6 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
 
     @Override
     void initData() {
-        hasData(true,null);
         Log.d(FRAGMENT_TAG,"" + (mActivity instanceof Context));
         q = (Query) FileUtils.readObject(mActivity,FRAGMENT_TAG);
         refreshLayout.autoRefresh();
@@ -76,7 +81,6 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
 
     @Override
     protected void refreshData() {
-        hasData(true,null);
         Log.d(FRAGMENT_TAG,"" + (mActivity instanceof Context));
         q = (Query) FileUtils.readObject(mActivity,FRAGMENT_TAG);
         refreshLayout.autoRefresh();
@@ -84,6 +88,7 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Inprogress,getString(R.string.loading));
         q.from = 0;
         @SuppressLint("DefaultLocale")
         String json = String.format(Constance.CONTEXT_JSON,q.context,q.from,q.size);
@@ -95,29 +100,30 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
                 if(results != null && results.size()>0 && total > 0){
                     adapter.refresh(results,total);
                     refreshLayout.finishRefresh(true);
-                    hasData(true,"");
+                    ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Success,getString(R.string.loaded));
                 }else{
                     refreshLayout.finishLoadMoreWithNoMoreData();
-                    hasData(false,getString(R.string.nodata));
+                    ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Failure,getString(R.string.nodata));
                 }
             }
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                 Log.d(FRAGMENT_TAG,statusCode + ":" + (errorResponse!=null?errorResponse.toString():"null"));
+                ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Failure,getString(R.string.network_error));
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.d(FRAGMENT_TAG,statusCode + ":" + (responseString!=null?responseString:"null"));
                 refreshLayout.finishRefresh(false);
-                hasData(false,getString(R.string.error));
+                ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Failure,getString(R.string.network_error));
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.d(FRAGMENT_TAG,statusCode + ":" + (errorResponse!=null?errorResponse.toString():"null"));
                 refreshLayout.finishRefresh(false);
-                hasData(false,getString(R.string.error));
+                ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Failure,getString(R.string.network_error));
             }
         });
     }
@@ -167,18 +173,5 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
             fragment.setArguments(bundle);
         }
         return fragment;
-    }
-    public void hasData(boolean has,String context){
-        Log.d(FRAGMENT_TAG,has + ":" + context);
-        if(has){
-            recyclerView.setVisibility(View.VISIBLE);
-            empty.setVisibility(View.GONE);
-        }else{
-            recyclerView.setVisibility(View.GONE);
-            empty.setVisibility(View.VISIBLE);
-            if(null!=context){
-                empty.setText(context);
-            }
-        }
     }
 }

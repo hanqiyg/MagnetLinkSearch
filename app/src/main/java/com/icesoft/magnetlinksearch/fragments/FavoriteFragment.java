@@ -2,6 +2,8 @@ package com.icesoft.magnetlinksearch.fragments;
 
 import android.os.Bundle;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +16,7 @@ import com.icesoft.magnetlinksearch.models.Favorite;
 import com.icesoft.magnetlinksearch.models.Result;
 import com.icesoft.magnetlinksearch.sqlites.ResultDao;
 import com.icesoft.magnetlinksearch.utils.FileUtils;
+import com.icesoft.magnetlinksearch.utils.ViewUtils;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -30,6 +33,11 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
     private FavoriteAdapter adapter;
     public Favorite favorite;
     private ResultDao dao;
+
+    @BindView(R.id.message)
+    TextView message;
+    @BindView(R.id.progress)
+    ProgressBar progress;
 
     @Override
     String getName() {
@@ -85,14 +93,17 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Inprogress,getString(R.string.loading));
         int total = getDao().count();
         if(total == 0){
             favorite.nodata = true;
             refreshLayout.finishLoadMoreWithNoMoreData();
+            ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Failure,getString(R.string.nodata));
         }else{
             List<Result> results = getDao().load(0,favorite.limit);
             adapter.refresh(results,total);
             refreshLayout.finishRefresh(true);
+            ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Success,getString(R.string.loaded));
         }
     }
 
