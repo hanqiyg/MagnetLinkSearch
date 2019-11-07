@@ -5,9 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.widget.*;
 import butterknife.BindView;
 import com.icesoft.magnetlinksearch.Constance;
 import com.icesoft.magnetlinksearch.R;
@@ -43,6 +41,10 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
 
     @BindView(R.id.files)
     ScrollView files;
+    @BindView(R.id.message)
+    TextView message;
+    @BindView(R.id.progress)
+    ProgressBar progress;
 
     ResultWithFiles r = null;
     ResultDao dao;
@@ -105,48 +107,11 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
         }
         return dao;
     }
-    TreeNode root = TreeNode.root();
-    public void createTree(List<TFile> files){
-        for(TFile f : files){
-            Log.d(FRAGMENT_TAG,"TFile:" + f.toString());
-            String[] paths = f.name.split("/");
-            Log.d(FRAGMENT_TAG,"TFile:" + paths.toString());
-            if(paths.length==1){
-                TreeNode node = new TreeNode(new Node(paths[0],f.length)).setViewHolder(new FileNode(mActivity));
-                root.addChild(node);
-                Log.d(FRAGMENT_TAG,"Root add:" + f.toString());
-            }else{
-                TreeNode parent = root;
-                for (int i=0;i<paths.length-1;i++){
-                    String name = paths[i];
-                    Log.d(FRAGMENT_TAG,"for:" + name);
-                    TreeNode current = getTreeNodeByName(name,parent);
-                    if (current == null){
-                        current = new TreeNode(paths[i]).setViewHolder(new GroupNode(mActivity));
-                        parent.addChild(current);
-                        parent = current;
-                        Log.d(FRAGMENT_TAG,"create node:" + paths[i]);
-                    }else{
-                        parent = current;
-                        Log.d(FRAGMENT_TAG,"use node:" + current.getValue());
-                    }
-                }
-                TreeNode leaf = new TreeNode(new Node(paths[paths.length-1],f.length)).setViewHolder(new FileNode(mActivity));
-                parent.addChild(leaf);
-            }
-        }
-    }
-    public TreeNode getTreeNodeByName(String name,TreeNode node){
-        for(TreeNode n : node.getChildren()){
-            if(n.getValue().equals(name)){
-                return n;
-            }
-        }
-        return null;
-    }
+
     @Override
     void initData() {
         String id = SharedPreferencesUtils.readDocumentId(mActivity);
+        ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Inprogress,getString(R.string.loading));
         if(id != null){
             String json = String.format(Constance.ID_SEARCH,id);
             ElasticRestClient.post(mActivity, Constance.PATH,json,new JsonHttpResponseHandler() {
@@ -158,20 +123,22 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
                         name.setText(FormatUtils.htmlText(r.name));
                         size.setText(FormatUtils.formatSize(r.size));
                         count.setText(String.valueOf(r.count) + " item(s)");
-                        createTree(r.files);
+                        TreeNode root = TreeUtils.createTree(mActivity,r.files);
                         AndroidTreeView tView = new AndroidTreeView(getActivity(), root);
                         files.addView(tView.getView());
+                        ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Success,getString(R.string.loaded));
+                    }else{
+                        ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Failure,getString(R.string.nodata));
                     }
-                }
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    Log.d(FRAGMENT_TAG, responseString);
                 }
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     Log.d(FRAGMENT_TAG, errorResponse != null ? errorResponse.toString() : "null");
+                    ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Failure,getString(R.string.network_error));
                 }
             });
+        }else{
+            ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Failure,getString(R.string.no_parameter));
         }
     }
 

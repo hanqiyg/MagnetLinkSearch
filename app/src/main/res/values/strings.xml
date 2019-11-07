@@ -27,4 +27,8 @@
     <string name="click_twice">Press BACK twice to Exit.</string>
     <string name="info_title">File Infomation</string>
     <string name="description_close">close</string>
+    <string name="loading">Loading in progress.</string>
+    <string name="no_parameter">Internal Error.</string>
+    <string name="loaded">Loading finish.</string>
+    <string name="network_error">Load fails.</string>
 </resources>

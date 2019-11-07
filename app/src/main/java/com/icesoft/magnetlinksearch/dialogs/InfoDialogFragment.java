@@ -1,11 +1,14 @@
 package com.icesoft.magnetlinksearch.dialogs;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,6 +42,8 @@ public class InfoDialogFragment extends BaseDialogFragment {
 
     @BindView(R.id.custom_title)   TextView title;
     @BindView(R.id.custom_close)   ImageView close;
+
+
     FileAdapter adapter;
     ResultWithFiles r = null;
     ResultDao dao;

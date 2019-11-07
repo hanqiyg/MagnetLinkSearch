@@ -7,10 +7,11 @@ import android.widget.TextView;
 import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.models.Node;
 import com.icesoft.magnetlinksearch.utils.FormatUtils;
+import com.icesoft.magnetlinksearch.utils.TreeUtils;
 import com.unnamed.b.atv.model.TreeNode;
 
 public class FileNode extends TreeNode.BaseNodeViewHolder<Node> {
-
+    public static final int PADING_UNIT = 20;
     public FileNode(Context context) {
         super(context);
     }
@@ -23,6 +24,7 @@ public class FileNode extends TreeNode.BaseNodeViewHolder<Node> {
         name.setText(value.name);
         TextView size = (TextView) view.findViewById(R.id.filesize);
         size.setText(FormatUtils.formatSize(value.size));
+        TreeUtils.TreeNodePaddingLeft(context,view,node);
         return view;
     }
 }
