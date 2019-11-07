@@ -40,7 +40,7 @@
           android:background="@drawable/bg_gradient"
           android:layout_gravity="center_horizontal"
     />
-    <androidx.recyclerview.widget.RecyclerView
+    <ScrollView
             android:id="@+id/files"
             android:background="@color/recycler_background"
             android:layout_width="match_parent"

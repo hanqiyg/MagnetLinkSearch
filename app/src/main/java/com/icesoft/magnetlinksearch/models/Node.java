@@ -1,21 +1,19 @@
 package com.icesoft.magnetlinksearch.models;
 
-public class TFile {
+public class Node {
     public String name;
-    public long length;
+    public long size;
 
-    public TFile(String name, long length) {
+    public Node(String name, long size) {
         this.name = name;
-        this.length = length;
-    }
-    public TFile() {
+        this.size = size;
     }
 
     @Override
     public String toString() {
-        return "TFile{" +
+        return "Node{" +
                 "name='" + name + '\'' +
-                ", length=" + length +
+                ", size=" + size +
                 '}';
     }
 }
