@@ -22,11 +22,12 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.icesoft.magnetlinksearch.R;
+import org.greenrobot.eventbus.EventBus;
 
 public abstract class BaseDialogFragment extends DialogFragment {
     protected static final String KEY = "argments";
-    Context mActivity;
-    private Bundle bundle;
+    Context context;
+    protected Bundle bundle;
     private View rootView;
     @BindView(R.id.adView)
     protected AdView mAdView;
@@ -36,7 +37,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         Log.d(getName(),"onAttach");
-        mActivity = (Activity) context;
+        this.context = context;
         bundle = getArguments();
     }
 
@@ -95,6 +96,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
         mLayoutParams.gravity = Gravity.CENTER;
         mLayoutParams.windowAnimations = R.style.BottomDialogAnimation;
         mWindow.setAttributes(mLayoutParams);
+        //EventBus.getDefault().register(this);
     }
 
     @Override
@@ -128,6 +130,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
     public void onStop() {
         super.onStop();
         Log.d(getName(),"onStop");
+        //EventBus.getDefault().unregister(this);
     }
 
     @Override

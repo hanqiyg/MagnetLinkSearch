@@ -9,7 +9,7 @@ public class Constance {
     public static final String KEY_SIMPLE_TOTAL = "KEY_SIMPLE_TOTAL";
 
     public static int QUERY_FROM = 0;
-    public static int QUERY_SIZE = 10;
+    public static int QUERY_LIMIT = 10;
     public static final String PATH = "/test/_search";
     public static final String PREFERENCE_FILE_NAME = "mPreferences";
     public static final String PREFERENCE_KEY_INFOHASH = "infohashhex";

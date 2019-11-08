@@ -32,13 +32,10 @@ public class SettingsFragment extends BaseFragment {
     }
 
     @Override
-    public boolean onBackPressed() {
-        if(mHandler != null){
-            mHandler.showFragment(SearchFragment.FRAGMENT_TAG);
-            return true;
-        }
-        return false;
+    String getBackStack() {
+        return SearchFragment.FRAGMENT_TAG;
     }
+
     public static SettingsFragment newInstance(Bundle bundle){
         SettingsFragment fragment = new SettingsFragment();
         fragment.setArguments(bundle);

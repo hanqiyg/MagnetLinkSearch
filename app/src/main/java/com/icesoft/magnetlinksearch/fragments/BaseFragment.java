@@ -8,15 +8,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import com.icesoft.magnetlinksearch.events.ExitEvent;
+import com.icesoft.magnetlinksearch.events.ShowFragmentEvent;
+import com.icesoft.magnetlinksearch.events.BackPressedEvent;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
-public abstract class BaseFragment extends Fragment implements OnBackPressedListener {
+public abstract class BaseFragment extends Fragment {
     protected static final String KEY = "argments";
     Context mActivity;
-    IHander mHandler;
     private Bundle bundle;
     private View rootView;
     protected Unbinder unbinder;
@@ -26,12 +30,6 @@ public abstract class BaseFragment extends Fragment implements OnBackPressedList
         Log.d(getName(),"onAttach");
         mActivity = context;
         bundle = getArguments();
-        if (!(context instanceof IHander)) {
-            throw new ClassCastException(
-                    "Hosting Activity must implement IHandle");
-        } else {
-            this.mHandler = (IHander) context;
-        }
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,7 +64,7 @@ public abstract class BaseFragment extends Fragment implements OnBackPressedList
     public void onStart() {
         super.onStart();
         Log.d(getName(),"onStart");
-        mHandler.setBackPressListener(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -80,7 +78,6 @@ public abstract class BaseFragment extends Fragment implements OnBackPressedList
         super.onHiddenChanged(hidden);
         Log.d(getName(),"onHiddenChanged: " + (hidden?"Hide":"Show"));
         if(!hidden){
-            mHandler.setBackPressListener(this);
             refreshData();
         }
     }
@@ -95,6 +92,7 @@ public abstract class BaseFragment extends Fragment implements OnBackPressedList
     public void onStop() {
         super.onStop();
         Log.d(getName(),"onStop");
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -120,6 +118,18 @@ public abstract class BaseFragment extends Fragment implements OnBackPressedList
     abstract void initView();
     abstract void initData();
     protected abstract void refreshData();
-    @Override
-    public abstract boolean onBackPressed();
+    abstract String getBackStack();
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBackPress(BackPressedEvent event){
+        if(this.isVisible()){
+            if(getBackStack()==null){
+                Log.d(getName(),"EXIT");
+                EventBus.getDefault().post(new ExitEvent());
+            }else{
+                Log.d(getName(),"BackPressedEvent:" + getBackStack());
+                EventBus.getDefault().post(new ShowFragmentEvent(getBackStack()));
+            }
+        }
+    }
 }

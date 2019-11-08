@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import com.icesoft.magnetlinksearch.Constance;
 
 public class SharedPreferencesUtils {
-    public static boolean writeDocumentId(Context context, String id) {
+/*    public static boolean writeDocumentId(Context context, String id) {
         if(context != null) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(Constance.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -32,5 +32,5 @@ public class SharedPreferencesUtils {
             return editor.commit();
         }
         return false;
-    }
+    }*/
 }

@@ -1,7 +1,6 @@
 package com.icesoft.magnetlinksearch.fragments;
 
 import android.os.Bundle;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -9,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
+import com.icesoft.magnetlinksearch.Constance;
 import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.adapters.FavoriteAdapter;
 import com.icesoft.magnetlinksearch.customs.SpacesItemDecoration;
@@ -31,7 +31,6 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
     @BindView(R.id.recyclerView)
     protected RecyclerView recyclerView;
     private FavoriteAdapter adapter;
-    public Favorite favorite;
     private ResultDao dao;
 
     @BindView(R.id.message)
@@ -66,25 +65,22 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
 
     @Override
     void initData() {
-        favorite = (Favorite) FileUtils.readObject(mActivity,FRAGMENT_TAG);
         refreshLayout.autoRefresh();
     }
 
     @Override
     protected void refreshData() {
-        if(favorite != null && !favorite.nodata){
-            initData();
+        int total = getDao().count();
+        if(total != adapter.getTotal()){
+            refreshLayout.autoRefresh();
         }
     }
 
     @Override
-    public boolean onBackPressed() {
-        if(mHandler != null){
-            mHandler.showFragment(SearchFragment.FRAGMENT_TAG);
-            return true;
-        }
-        return false;
+    String getBackStack() {
+        return SearchFragment.FRAGMENT_TAG;
     }
+
     public static FavoriteFragment newInstance(Bundle bundle){
         FavoriteFragment fragment = new FavoriteFragment();
         fragment.setArguments(bundle);
@@ -96,11 +92,10 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
         ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Inprogress,getString(R.string.loading));
         int total = getDao().count();
         if(total == 0){
-            favorite.nodata = true;
             refreshLayout.finishLoadMoreWithNoMoreData();
             ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Failure,getString(R.string.nodata));
         }else{
-            List<Result> results = getDao().load(0,favorite.limit);
+            List<Result> results = getDao().load(Constance.FAVORITE_FROM, Constance.FAVORITE_LIMIT);
             adapter.refresh(results,total);
             refreshLayout.finishRefresh(true);
             ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Success,getString(R.string.loaded));
@@ -109,7 +104,7 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
 
     @Override
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-        List<Result> results = getDao().load(favorite.from,favorite.limit);
+        List<Result> results = getDao().load(adapter.getFrom(),Constance.FAVORITE_LIMIT);
         if(results != null && results.size()>0){
             adapter.addData(results);
             refreshLayout.finishLoadMore(true);

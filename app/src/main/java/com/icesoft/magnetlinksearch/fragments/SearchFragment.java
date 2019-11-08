@@ -1,21 +1,19 @@
 package com.icesoft.magnetlinksearch.fragments;
 
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.InputFilter;
-import android.text.Spanned;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
-import com.icesoft.magnetlinksearch.Constance;
 import com.icesoft.magnetlinksearch.R;
+import com.icesoft.magnetlinksearch.events.ShowFragmentEvent;
 import com.icesoft.magnetlinksearch.customs.filters.TextLengthFilter;
-import com.icesoft.magnetlinksearch.interfaces.OnQueryListener;
+import com.icesoft.magnetlinksearch.events.QueryEvent;
 import com.icesoft.magnetlinksearch.utils.ElasticRestClient;
 import com.icesoft.magnetlinksearch.utils.KeybordUtil;
 import com.icesoft.magnetlinksearch.utils.Utils;
@@ -23,6 +21,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import cz.msebera.android.httpclient.Header;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.html.HtmlPlugin;
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -91,10 +90,6 @@ public class SearchFragment extends BaseFragment {
     protected void refreshData() {
         updateTotalCount();
     }
-    @Override
-    public boolean onBackPressed() {
-        return false;
-    }
     public static SearchFragment newInstance(String text){
         SearchFragment fragment = new SearchFragment();
         Bundle bundle = new Bundle();
@@ -108,11 +103,8 @@ public class SearchFragment extends BaseFragment {
             etSearch.clearFocus();
             KeybordUtil.hideKeyboard((AppCompatActivity) mActivity);
             String safe = Utils.secureKeywords(keywords);
-            if(mActivity instanceof OnQueryListener){
-                ((OnQueryListener)mActivity).Query(safe,
-                        Constance.QUERY_FROM,
-                        Constance.QUERY_SIZE);
-            }
+            EventBus.getDefault().postSticky(new QueryEvent(safe));
+            EventBus.getDefault().post(new ShowFragmentEvent(ResultFragment.FRAGMENT_TAG));
         }
     }
     public void updateTotalCount(){
@@ -122,12 +114,19 @@ public class SearchFragment extends BaseFragment {
                 if (statusCode == 200) {
                     try {
                         long count = response.getLong("count");
-                        tvInfo.setText(String.valueOf(count));
+                        if(tvInfo!=null){
+                            tvInfo.setText(String.valueOf(count));
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             }
         });
+    }
+
+    @Override
+    String getBackStack() {
+        return null;
     }
 }

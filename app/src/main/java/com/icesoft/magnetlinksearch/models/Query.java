@@ -18,4 +18,15 @@ public class Query implements Serializable {
         this.results = results;
     }
     public Query(){}
+
+    @Override
+    public String toString() {
+        return "Query{" +
+                "context='" + context + '\'' +
+                ", from=" + from +
+                ", size=" + size +
+                ", total=" + total +
+                ", results=" + results +
+                '}';
+    }
 }

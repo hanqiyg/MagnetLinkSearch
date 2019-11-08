@@ -31,4 +31,5 @@
     <string name="no_parameter">Internal Error.</string>
     <string name="loaded">Loading finish.</string>
     <string name="network_error">Load fails.</string>
+    <string name="file_unit">files</string>
 </resources>

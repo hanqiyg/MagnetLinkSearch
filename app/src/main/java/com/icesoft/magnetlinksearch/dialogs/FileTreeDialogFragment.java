@@ -1,5 +1,6 @@
 package com.icesoft.magnetlinksearch.dialogs;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,11 +10,7 @@ import android.widget.*;
 import butterknife.BindView;
 import com.icesoft.magnetlinksearch.Constance;
 import com.icesoft.magnetlinksearch.R;
-import com.icesoft.magnetlinksearch.customs.trees.GroupNode;
-import com.icesoft.magnetlinksearch.customs.trees.FileNode;
-import com.icesoft.magnetlinksearch.models.Node;
 import com.icesoft.magnetlinksearch.models.ResultWithFiles;
-import com.icesoft.magnetlinksearch.models.TFile;
 import com.icesoft.magnetlinksearch.sqlites.ResultDao;
 import com.icesoft.magnetlinksearch.utils.*;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -22,10 +19,9 @@ import com.unnamed.b.atv.view.AndroidTreeView;
 import cz.msebera.android.httpclient.Header;
 import org.json.JSONObject;
 
-import java.util.List;
-
 public class FileTreeDialogFragment extends BaseDialogFragment {
-    public static final String FRAGMENT_TAG = "FileTreeDialogFragment";
+    public static final String FRAGMENT_TAG = FileTreeDialogFragment.class.getSimpleName();
+    public static final String ID = "id";
     @BindView(R.id.tv_date)  TextView date;
     @BindView(R.id.tv_name)  TextView name;
     @BindView(R.id.tv_size)  TextView size;
@@ -60,7 +56,7 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
 
     @Override
     void initView() {
-        title.setText(mActivity.getString(R.string.info_title));
+        title.setText(context.getString(R.string.info_title));
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +76,7 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, FormatUtils.shareText(r));
                 sendIntent.setType("text/plain");
-                mActivity.startActivity(sendIntent);
+                context.startActivity(sendIntent);
             }
         });
         fav.setOnClickListener(new View.OnClickListener() {
@@ -96,25 +92,20 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
                     Intent intent = new Intent();
                     Uri content_url = Uri.parse(FormatUtils.magnetFromId(r.id));
                     intent.setData(content_url);
-                    mActivity.startActivity(intent);
+                    context.startActivity(intent);
                 }
             }
         });
     }
-    public ResultDao getDao(){
-        if(dao == null){
-            dao = new ResultDao(mActivity);
-        }
-        return dao;
-    }
 
     @Override
     void initData() {
-        String id = SharedPreferencesUtils.readDocumentId(mActivity);
-        ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Inprogress,getString(R.string.loading));
-        if(id != null){
+        if (bundle != null){
+            String id = bundle.getString(ID);
+            ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Inprogress,getString(R.string.loading));
             String json = String.format(Constance.ID_SEARCH,id);
-            ElasticRestClient.post(mActivity, Constance.PATH,json,new JsonHttpResponseHandler() {
+            ElasticRestClient.post(context, Constance.PATH,json,new JsonHttpResponseHandler() {
+                @SuppressLint("SetTextI18n")
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     r = Utils.JSON2ResultWithFiles(response);
@@ -122,8 +113,8 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
                         date.setText(FormatUtils.formatDate(r.date));
                         name.setText(FormatUtils.htmlText(r.name));
                         size.setText(FormatUtils.formatSize(r.size));
-                        count.setText(String.valueOf(r.count) + " item(s)");
-                        TreeNode root = TreeUtils.createTree(mActivity,r.files);
+                        count.setText(r.count + context.getString(R.string.file_unit));
+                        TreeNode root = TreeUtils.createTree(context,r.files);
                         AndroidTreeView tView = new AndroidTreeView(getActivity(), root);
                         files.addView(tView.getView());
                         ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Success,getString(R.string.loaded));
@@ -138,17 +129,23 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
                 }
             });
         }else{
-            ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Failure,getString(R.string.no_parameter));
+            ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Failure,getString(R.string.error));
         }
     }
 
-    @Override
-    protected void refreshData() {
-
+    public ResultDao getDao(){
+        if(dao == null){
+            dao = new ResultDao(context);
+        }
+        return dao;
     }
+
+    @Override
+    protected void refreshData() {}
     public static FileTreeDialogFragment newInstance(Bundle bundle){
         FileTreeDialogFragment fragment = new FileTreeDialogFragment();
         fragment.setArguments(bundle);
         return fragment;
     }
+
 }

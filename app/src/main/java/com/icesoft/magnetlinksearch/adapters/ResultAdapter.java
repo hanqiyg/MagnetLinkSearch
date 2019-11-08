@@ -17,17 +17,19 @@ import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.fragments.ResultFragment;
 import com.icesoft.magnetlinksearch.models.Result;
 import com.icesoft.magnetlinksearch.sqlites.ResultDao;
-import com.icesoft.magnetlinksearch.utils.FileUtils;
 import com.icesoft.magnetlinksearch.utils.FormatUtils;
 import com.icesoft.magnetlinksearch.utils.ViewUtils;
 
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
-    private static final String T = "ResultAdapter";
+    private static final String T = ResultAdapter.class.getSimpleName();
     private Context mActivity;
     private ResultFragment fragment;
+    private List<Result> results = new ArrayList<>();
+    private int total = 0;
+    private int from = 0;
     public static class VH extends RecyclerView.ViewHolder{
         @BindView(R.id.tv_date)  TextView date;
         @BindView(R.id.tv_name)  TextView name;
@@ -61,46 +63,32 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
     @Override
     public void onBindViewHolder(@NonNull VH v, int position) {
         ResultDao dao = new ResultDao(mActivity);
-        Result r = fragment.q.results.get(position);
+        Result r = results.get(position);
         v.date.setText(FormatUtils.formatDate(r.date));
         v.name.setText(FormatUtils.htmlText(r.name));
         v.size.setText(FormatUtils.formatSize(r.size));
         v.count.setText(String.valueOf(r.count) + " item(s)");
         v.no.setText(String.valueOf(position + 1));
-        v.total.setText(String.valueOf(fragment.q.total));
+        v.total.setText(String.valueOf(total));
 
         setFav(v.fav,dao.exist(r.id));
-        v.share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, FormatUtils.shareText(r));
-                sendIntent.setType("text/plain");
-                mActivity.startActivity(sendIntent);
-            }
+        v.share.setOnClickListener(view -> {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, FormatUtils.shareText(r));
+            sendIntent.setType("text/plain");
+            mActivity.startActivity(sendIntent);
         });
-        v.fav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setFav(v.fav,dao.set(r));
-                notifyItemChanged(position);
-            }
+        v.fav.setOnClickListener(view -> {
+            setFav(v.fav,dao.set(r));
+            notifyItemChanged(position);
         });
-        v.file.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ViewUtils.gotoInfoDialogFragment(mActivity,r.id);
-            }
-        });
-        v.down.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                Uri content_url = Uri.parse(FormatUtils.magnetFromId(r.id));
-                intent.setData(content_url);
-                mActivity.startActivity(intent);
-            }
+        v.file.setOnClickListener(view -> ViewUtils.gotoInfoDialogFragment(mActivity,r.id));
+        v.down.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            Uri content_url = Uri.parse(FormatUtils.magnetFromId(r.id));
+            intent.setData(content_url);
+            mActivity.startActivity(intent);
         });
     }
     public void setFav(ImageView fav, boolean b){
@@ -110,28 +98,33 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
             fav.setImageResource(R.drawable.ic_favorite_black_24dp);
         }
     }
+
     @Override
     public int getItemCount() {
-        return fragment.q.results==null?0:fragment.q.results.size();
+        return results==null?0:results.size();
     }
     public void refresh(List<Result> newData, int total){
         if(newData != null && newData.size()>0){
-            fragment.q.total = total;
-            fragment.q.results.clear();
-            fragment.q.results.addAll(newData);
-            fragment.q.from = fragment.q.results.size();
-            FileUtils.writeObject(mActivity,ResultFragment.FRAGMENT_TAG,fragment.q);
+            this.total = total;
+            this.results.clear();
+            this.results.addAll(newData);
+            this.from = results.size();
             notifyDataSetChanged();
         }
     }
 
     public void addData(List<Result> more) {
         if(more != null && more.size()>0){
-            int position = fragment.q.results.size();
-            fragment.q.results.addAll(position, more);
-            fragment.q.from = fragment.q.results.size();
-            FileUtils.writeObject(mActivity,ResultFragment.FRAGMENT_TAG,fragment.q);
+            int position = results.size();
+            this.results.addAll(position, more);
+            this.from = results.size();
             notifyItemInserted(position);
         }
+    }
+    public int getTotal(){
+        return total;
+    }
+    public int getFrom(){
+        return from;
     }
 }
