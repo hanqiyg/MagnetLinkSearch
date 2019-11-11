@@ -17,6 +17,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        packagingOptions {
+            pickFirst 'META-INF/LICENSE.txt' // picks the JavaMail license file
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

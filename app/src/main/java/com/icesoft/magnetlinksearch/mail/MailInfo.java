@@ -3,6 +3,7 @@ package com.icesoft.magnetlinksearch.mail;
 import java.util.Properties;
 
 public class MailInfo {
+
     private String mailServerHost;// 发送邮件的服务器的IP
     private String mailServerPort;// 发送邮件的服务器的端口
     private String fromAddress;// 邮件发送者的地址
@@ -105,27 +106,5 @@ public class MailInfo {
 
     public void setContent(String textContent) {
         this.content = textContent;
-    }
-
-    @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("MailServerHost:\t"); sb.append(mailServerHost);  sb.append("\r\n");
-        sb.append("MailServerPort:\t"); sb.append(mailServerPort);  sb.append("\r\n");
-        sb.append("FromAddress:\t");    sb.append(fromAddress);     sb.append("\r\n");
-        sb.append("toAddress:\t");      sb.append(toAddress);       sb.append("\r\n");
-        sb.append("userName:\t");       sb.append(userName);        sb.append("\r\n");
-        sb.append("password:\t");       sb.append(password);        sb.append("\r\n");
-        sb.append("validate:\t");       sb.append(validate);        sb.append("\r\n");
-        sb.append("subject:\t");        sb.append(subject);         sb.append("\r\n");
-        sb.append("content:\t");        sb.append(content);         sb.append("\r\n");
-        if(attachFileNames!=null){
-            sb.append("attachFileNames:\t [");
-            for(String afn : attachFileNames){
-                sb.append(afn);         sb.append("\r\n");
-            }
-            sb.append("]");
-        }
-        return sb.toString();
     }
 }

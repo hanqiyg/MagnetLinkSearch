@@ -27,7 +27,7 @@ public class WaitDialogFragment extends BaseDialogFragment {
 
     @Override
     int getLayoutResourceID() {
-        return R.layout.dialog_info;
+        return R.layout.dialog_wait;
     }
 
     @Override
@@ -52,5 +52,4 @@ public class WaitDialogFragment extends BaseDialogFragment {
         fragment.setArguments(bundle);
         return fragment;
     }
-
 }

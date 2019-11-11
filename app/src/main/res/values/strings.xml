@@ -38,6 +38,8 @@
     <string name="share">Share</string>
     <string name="send">Send</string>
     <string name="report_content">Content</string>
-    <string name="to_author">To Author</string>
+    <string name="to_author">Dear author,</string>
     <string name="email">me@world.com</string>
+    <string name="wait">Wait a minute.</string>
+    <string name="from_email">from</string>
 </resources>

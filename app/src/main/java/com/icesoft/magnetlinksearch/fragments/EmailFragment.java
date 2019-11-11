@@ -1,29 +1,17 @@
 package com.icesoft.magnetlinksearch.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.InputFilter;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.OnItemSelected;
 import com.icesoft.magnetlinksearch.R;
-import com.icesoft.magnetlinksearch.customs.filters.TextLengthFilter;
-import com.icesoft.magnetlinksearch.events.QueryEvent;
-import com.icesoft.magnetlinksearch.events.ShowFragmentEvent;
-import com.icesoft.magnetlinksearch.mail.SendMailUtil;
-import com.icesoft.magnetlinksearch.utils.ElasticRestClient;
-import com.icesoft.magnetlinksearch.utils.KeybordUtil;
-import com.icesoft.magnetlinksearch.utils.Utils;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import cz.msebera.android.httpclient.Header;
-import io.noties.markwon.Markwon;
-import io.noties.markwon.html.HtmlPlugin;
-import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.icesoft.magnetlinksearch.dialogs.WaitDialogFragment;
+import com.icesoft.magnetlinksearch.mail.SendMailUtils;
+import com.icesoft.magnetlinksearch.tasks.SendMailAsyncTask;
+import com.icesoft.magnetlinksearch.utils.StringUtils;
 
 
 public class EmailFragment extends BaseFragment {
@@ -35,16 +23,16 @@ public class EmailFragment extends BaseFragment {
     EditText fromAddress;
     @BindView(R.id.select)
     Spinner type;
-
+    SendMailAsyncTask sendMailAsyncTask;
+    WaitDialogFragment dialogFragment;
     @OnClick(R.id.submit)
     public void submit(){
-        SendMailUtil.send(msgType,getContent(content,fromAddress));
-    }
-
-    private String getContent(EditText content,EditText fromAddress) {
-        String c = content.getText().toString();
-        String a = fromAddress.getText().toString();
-        return String.format("%s\r\n\r\n%s",c,a);
+        String message = StringUtils.checkContent(content.getText().toString());
+        String email = StringUtils.checkEmail(fromAddress.getText().toString());
+        if(message != null && email != null){
+            sendMailAsyncTask = new SendMailAsyncTask((AppCompatActivity) mActivity);
+            sendMailAsyncTask.execute(msgType,String.format("%s\r\n\r\n%s",message,email));
+        }
     }
 
     @Override
@@ -99,4 +87,14 @@ public class EmailFragment extends BaseFragment {
     String getBackStack() {
         return SearchFragment.FRAGMENT_TAG;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(sendMailAsyncTask != null){
+            sendMailAsyncTask.cancel(true);
+        }
+    }
+
+
 }
