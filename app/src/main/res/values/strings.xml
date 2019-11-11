@@ -8,6 +8,7 @@
     <string name="action_settings">Settings</string>
     <string name="keywords">keywords</string>
     <string name="submit">&#160;&#160;Search&#160;&#160;  </string>
+    <string name="send_mail">&#160;&#160;Send&#160;&#160;  </string>
     <string name="of">/</string>
     <string name="title_settings">Settings</string>
     <string name="title_search">Search</string>
@@ -32,4 +33,11 @@
     <string name="loaded">Loading finish.</string>
     <string name="network_error">Load fails.</string>
     <string name="file_unit">files</string>
+    <string name="slideshow">SlideShow</string>
+    <string name="Communication">Communication</string>
+    <string name="share">Share</string>
+    <string name="send">Send</string>
+    <string name="report_content">Content</string>
+    <string name="to_author">To Author</string>
+    <string name="email">me@world.com</string>
 </resources>

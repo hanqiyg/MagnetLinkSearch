@@ -30,14 +30,11 @@ import com.icesoft.magnetlinksearch.events.BackPressedEvent;
 import com.icesoft.magnetlinksearch.events.ExitEvent;
 import com.icesoft.magnetlinksearch.events.ShowFragmentEvent;
 import com.icesoft.magnetlinksearch.fragments.*;
-import com.icesoft.magnetlinksearch.models.Favorite;
-import com.icesoft.magnetlinksearch.utils.FileUtils;
 import com.icesoft.magnetlinksearch.utils.KeybordUtil;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -193,9 +190,10 @@ public class MainActivity extends AppCompatActivity
     private Fragment initFragment(String tag) {
         Fragment fragment = null;
         switch (tag){
-            case ResultFragment.FRAGMENT_TAG : fragment = ResultFragment.newInstance(null);break;
-            case FavoriteFragment.FRAGMENT_TAG : fragment = FavoriteFragment.newInstance(null);break;
-            case SettingsFragment.FRAGMENT_TAG : fragment = SettingsFragment.newInstance(null);break;
+            case ResultFragment.FRAGMENT_TAG    : fragment = ResultFragment.newInstance(null);break;
+            case FavoriteFragment.FRAGMENT_TAG  : fragment = FavoriteFragment.newInstance(null);break;
+            case SettingsFragment.FRAGMENT_TAG  : fragment = SettingsFragment.newInstance(null);break;
+            case EmailFragment.FRAGMENT_TAG     : fragment = EmailFragment.newInstance(null);break;
             default: fragment = SearchFragment.newInstance(null);break;
         }
         return fragment;
@@ -208,12 +206,10 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        System.out.println("test:" + id);
         if (id == R.id.nav_search) {
             showFragment(SearchFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_fav) {
-            Favorite f = new Favorite(Constance.FAVORITE_FROM,Constance.FAVORITE_LIMIT,0,new ArrayList<>());
-            FileUtils.writeObject(this,FavoriteFragment.FRAGMENT_TAG,f);
             showFragment(FavoriteFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_slideshow) {
 
@@ -222,7 +218,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
+            showFragment(EmailFragment.FRAGMENT_TAG);
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;

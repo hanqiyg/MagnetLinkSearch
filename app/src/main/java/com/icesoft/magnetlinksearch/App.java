@@ -3,6 +3,7 @@ package com.icesoft.magnetlinksearch;
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
+import androidx.multidex.MultiDex;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.*;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
@@ -32,6 +33,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         Log.d(T,"onCreate");
+        MultiDex.install(this);
     }
 
     @Override
