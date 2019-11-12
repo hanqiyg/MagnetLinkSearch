@@ -3,7 +3,7 @@
     <string-array name="type">
         <item>I want have a Chat with you.</item>
         <item>I want report a Bug to you.</item>
-        <item>I want some wonderful idea.</item>
+        <item>I have some wonderful idea.</item>
         <item>I want share something.</item>
     </string-array>
 </resources>

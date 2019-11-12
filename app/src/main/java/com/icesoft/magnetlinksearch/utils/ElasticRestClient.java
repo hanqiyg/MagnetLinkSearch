@@ -23,38 +23,24 @@ public class ElasticRestClient {
     private static final String USERNAME = "elastic";
     private static final String PASSWORD = "xAH4WxXXiEsaZQQsAz0s";
     private static final String BASE_URL = "http://es.makebot.club:9200/"; //http://localhost:9200/
-    private static final String CLASS_NAME = ElasticRestClient.class.getSimpleName();
     private static AsyncHttpClient client = new AsyncHttpClient();
     static{
-
-    }
-
-
-    public static void mGet(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.get(url, params, responseHandler);
-    }
-    public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        String host = getAbsoluteUrl(url);
         client.addHeader(
                 "Authorization",
                 "Basic " + Base64.encodeToString(
                         (USERNAME+":"+PASSWORD).getBytes(),Base64.NO_WRAP)
         );
-        client.get(host, params, responseHandler);
     }
-
-    public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.post(getAbsoluteUrl(url), params, responseHandler);
+    public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+         client.get(getAbsoluteUrl(url), params, responseHandler);
     }
-
     private static String getAbsoluteUrl(String relativeUrl) {
         return BASE_URL + relativeUrl;
     }
-
-    public static void post(Context context, String url, String jsonObject, JsonHttpResponseHandler responseHandler){
+    public static void post(Context context, String url, String jsonString, JsonHttpResponseHandler responseHandler){
        ByteArrayEntity entity = null;
        try {
-            entity = new ByteArrayEntity(jsonObject.getBytes("UTF-8"));
+            entity = new ByteArrayEntity(jsonString.getBytes("UTF-8"));
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
            client.post(context,getAbsoluteUrl(url), entity, "application/json", responseHandler);
        } catch (UnsupportedEncodingException e) {

@@ -15,6 +15,7 @@ import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.dialogs.FileTreeDialogFragment;
 import com.icesoft.magnetlinksearch.models.Result;
 import com.icesoft.magnetlinksearch.sqlites.ResultDao;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
 public class ViewUtils {
     public enum Status{
@@ -49,6 +50,9 @@ public class ViewUtils {
             sendIntent.putExtra(Intent.EXTRA_TEXT, FormatUtils.shareText(result));
             sendIntent.setType("text/plain");
             context.startActivity(sendIntent);
+/*            String URL = "/share";
+            String jsonString = "{\"id\" : \"%s\"  , \"imei\" : 28}";
+            ElasticRestClient.post(context,URL,jsonString,new JsonHttpResponseHandler());*/
         }
     }
     public static void fav(Context context, Result result, ResultDao dao, ImageView fav, RecyclerView.Adapter adapter, int position){
