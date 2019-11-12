@@ -131,7 +131,6 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
     private void init(Bundle savedInstanceState) {
@@ -212,11 +211,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_fav) {
             showFragment(FavoriteFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_slideshow) {
-
+            showFragment(TopFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_manage) {
-
+            showFragment(SettingsFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_share) {
-
+            showFragment(ShareFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_send) {
             showFragment(EmailFragment.FRAGMENT_TAG);
         }

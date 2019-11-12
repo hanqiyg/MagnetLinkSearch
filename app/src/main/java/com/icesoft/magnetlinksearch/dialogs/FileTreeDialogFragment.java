@@ -1,18 +1,22 @@
 package com.icesoft.magnetlinksearch.dialogs;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import butterknife.BindView;
 import com.icesoft.magnetlinksearch.Constance;
 import com.icesoft.magnetlinksearch.R;
+import com.icesoft.magnetlinksearch.models.Result;
 import com.icesoft.magnetlinksearch.models.ResultWithFiles;
 import com.icesoft.magnetlinksearch.sqlites.ResultDao;
-import com.icesoft.magnetlinksearch.utils.*;
+import com.icesoft.magnetlinksearch.utils.ElasticRestClient;
+import com.icesoft.magnetlinksearch.utils.TreeUtils;
+import com.icesoft.magnetlinksearch.utils.Utils;
+import com.icesoft.magnetlinksearch.utils.ViewUtils;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
@@ -27,27 +31,28 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
     public static final String SIZE = "size";
     public static final String COUNT = "count";
 
-    @BindView(R.id.tv_date)  TextView date;
-    @BindView(R.id.tv_name)  TextView name;
-    @BindView(R.id.tv_size)  TextView size;
-    @BindView(R.id.tv_count) TextView count;
+    @BindView(R.id.tv_date)  TextView tvDate;
+    @BindView(R.id.tv_name)  TextView tvName;
+    @BindView(R.id.tv_size)  TextView tvSize;
+    @BindView(R.id.tv_count) TextView tvCount;
 
-    @BindView(R.id.share)   ImageView share;
-    @BindView(R.id.fav)     ImageView fav;
-    @BindView(R.id.down)    ImageView down;
+    @BindView(R.id.share)   ImageView ivShare;
+    @BindView(R.id.fav)     ImageView ivFav;
+    @BindView(R.id.down)    ImageView ivDown;
     @BindView(R.id.cancel)  ImageView cancel;
 
     @BindView(R.id.custom_title)   TextView title;
     @BindView(R.id.custom_close)   ImageView close;
 
     @BindView(R.id.files)
-    ScrollView files;
+    ScrollView svFiles;
     @BindView(R.id.message)
     TextView message;
     @BindView(R.id.progress)
     ProgressBar progress;
 
-    ResultWithFiles r = null;
+    public Result r;
+
     ResultDao dao;
     @Override
     int getLayoutResourceID() {
@@ -74,61 +79,47 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
                 FileTreeDialogFragment.this.dismiss();
             }
         });
-
-        share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ViewUtils.share(context,r);
-            }
-        });
-        ViewUtils.setfav(fav,dao.exist(r.id));
-        fav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ViewUtils.fav(context,r,getDao(),fav,null,-1);
-            }
-        });
-        down.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ViewUtils.down(context,r);
-            }
-        });
     }
-
+    private Result getResult(Bundle bundle){
+        if(bundle != null){
+            String id = bundle.getString(ID);
+            String date = bundle.getString(DATE);
+            String name = bundle.getString(NAME);
+            long size = bundle.getLong(SIZE);
+            long count = bundle.getLong(COUNT);
+            return new Result(id,date,name,size,count);
+        }
+        return null;
+    }
     @Override
     void initData() {
-        if (bundle != null){
-            String id = bundle.getString(ID);
-
-            date.setText(FormatUtils.formatDate(bundle.getString(DATE)));
-            name.setText(FormatUtils.htmlText(bundle.getString(NAME)));
-            size.setText(FormatUtils.formatSize(bundle.getLong(SIZE)));
-            count.setText(bundle.getLong(COUNT) + context.getString(R.string.file_unit));
-
-            ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Inprogress,getString(R.string.loading));
-            String json = String.format(Constance.ID_SEARCH,id);
+        r = getResult(bundle);
+        if(r != null){
+            ViewUtils.setResultView(context,r,getDao(),null,-1,1,
+                    tvDate,tvName,tvSize,tvCount,null,null,ivShare,ivFav,null,ivDown);
+            ViewUtils.setProgress(svFiles,progress,message,ViewUtils.Status.Inprogress,getString(R.string.loading));
+            String json = String.format(Constance.ID_SEARCH,r.id);
             ElasticRestClient.post(context, Constance.PATH,json,new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    r = Utils.JSON2ResultWithFiles(response);
-                    if(r != null){
-                        TreeNode root = TreeUtils.createTree(context,r.files);
+                    ResultWithFiles rf = Utils.JSON2ResultWithFiles(response);
+                    if(rf != null){
+                        TreeNode root = TreeUtils.createTree(context,rf.files);
                         AndroidTreeView tView = new AndroidTreeView(getActivity(), root);
-                        files.addView(tView.getView());
-                        ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Success,getString(R.string.loaded));
+                        svFiles.addView(tView.getView());
+                        ViewUtils.setProgress(svFiles,progress,message,ViewUtils.Status.Success,getString(R.string.loaded));
                     }else{
-                        ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Failure,getString(R.string.nodata));
+                        ViewUtils.setProgress(svFiles,progress,message,ViewUtils.Status.Failure,getString(R.string.nodata));
                     }
                 }
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     Log.d(FRAGMENT_TAG, errorResponse != null ? errorResponse.toString() : "null");
-                    ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Failure,getString(R.string.network_error));
+                    ViewUtils.setProgress(svFiles,progress,message,ViewUtils.Status.Failure,getString(R.string.network_error));
                 }
             });
         }else{
-            ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Failure,getString(R.string.error));
+            ViewUtils.setProgress(svFiles,progress,message,ViewUtils.Status.Failure,getString(R.string.error));
         }
     }
 

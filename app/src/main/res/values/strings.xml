@@ -32,7 +32,7 @@
     <string name="no_parameter">Internal Error.</string>
     <string name="loaded">Loading finish.</string>
     <string name="network_error">Load fails.</string>
-    <string name="file_unit">files</string>
+    <string name="file_unit" formatted="true">%d files</string>
     <string name="slideshow">SlideShow</string>
     <string name="Communication">Communication</string>
     <string name="share">Share</string>

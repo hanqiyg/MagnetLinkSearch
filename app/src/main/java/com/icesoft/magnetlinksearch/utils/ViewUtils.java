@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
 import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.dialogs.FileTreeDialogFragment;
 import com.icesoft.magnetlinksearch.models.Result;
@@ -84,6 +85,28 @@ public class ViewUtils {
             Uri content_url = Uri.parse(FormatUtils.magnetFromId(result.id));
             intent.setData(content_url);
             context.startActivity(intent);
+        }
+    }
+
+    public static void setResultView(Context context,Result r,ResultDao dao,RecyclerView.Adapter adapter,int positon,int total,
+                                     TextView tvDate,TextView tvName,TextView tvSize,TextView tvCount,TextView tvNo,TextView tvTotal,
+                                     ImageView ivShare,ImageView ivFav,ImageView ivFile,ImageView ivDown
+    ){
+        if(r != null){
+            if(tvDate != null)  { tvDate.setText(FormatUtils.formatDate(r.date)); }
+            if(tvName != null)  { tvName.setText(FormatUtils.htmlText(r.name)); }
+            if(tvSize != null)  { tvSize.setText(FormatUtils.formatSize(r.size)); }
+            if(tvCount != null) { tvCount.setText(context.getString(R.string.file_unit,r.count)); }
+            if(tvNo != null)    { tvNo.setText(String.valueOf(positon+1)); }
+            if(tvTotal != null) { tvTotal.setText(String.valueOf(total)); }
+
+            if(ivShare != null) { ivShare.setOnClickListener(View -> ViewUtils.share(context,r)); }
+            if(ivFav != null)   {
+                setfav(ivFav,dao.exist(r.id));
+                ivFav.setOnClickListener(View -> ViewUtils.fav(context,r,dao,ivFav,adapter,positon));
+            }
+            if(ivFile != null)  { ivFile.setOnClickListener(View -> ViewUtils.file(context,r)); }
+            if(ivDown != null)  { ivDown.setOnClickListener(View -> ViewUtils.down(context,r)); }
         }
     }
 }

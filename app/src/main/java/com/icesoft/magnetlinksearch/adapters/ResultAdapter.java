@@ -30,18 +30,18 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
     private int from = 0;
     private ResultDao dao;
     public static class VH extends RecyclerView.ViewHolder{
-        @BindView(R.id.tv_date)  TextView date;
-        @BindView(R.id.tv_name)  TextView name;
-        @BindView(R.id.tv_size)  TextView size;
-        @BindView(R.id.tv_count) TextView count;
+        @BindView(R.id.tv_date)  TextView tvDate;
+        @BindView(R.id.tv_name)  TextView tvName;
+        @BindView(R.id.tv_size)  TextView tvSize;
+        @BindView(R.id.tv_count) TextView tvCount;
 
-        @BindView(R.id.share)   ImageView share;
-        @BindView(R.id.fav)     ImageView fav;
-        @BindView(R.id.file)    ImageView file;
-        @BindView(R.id.down)    ImageView down;
+        @BindView(R.id.share)   ImageView ivShare;
+        @BindView(R.id.fav)     ImageView ivFav;
+        @BindView(R.id.file)    ImageView ivFile;
+        @BindView(R.id.down)    ImageView ivDown;
 
-        @BindView(R.id.no)       TextView no;
-        @BindView(R.id.total)   TextView total;
+        @BindView(R.id.no)       TextView tvNo;
+        @BindView(R.id.total)   TextView tvTotal;
         public VH(View v) {
             super(v);
             ButterKnife.bind(this, v);
@@ -62,18 +62,8 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
     @Override
     public void onBindViewHolder(@NonNull VH v, int position) {
         Result r = results.get(position);
-        v.date.setText(FormatUtils.formatDate(r.date));
-        v.name.setText(FormatUtils.htmlText(r.name));
-        v.size.setText(FormatUtils.formatSize(r.size));
-        v.count.setText(String.valueOf(r.count) + context.getString(R.string.file_unit));
-        v.no.setText(String.valueOf(position + 1));
-        v.total.setText(String.valueOf(total));
-
-        ViewUtils.setfav(v.fav,dao.exist(r.id));
-        v.share.setOnClickListener(view -> {    ViewUtils.share(context,r);});
-        v.fav.setOnClickListener(view -> {      ViewUtils.fav(context,r,getDao(),v.fav,this,position);});
-        v.file.setOnClickListener(view ->       ViewUtils.file(context,r));
-        v.down.setOnClickListener(view ->       ViewUtils.down(context,r));
+        ViewUtils.setResultView(context,r,getDao(),this,position,total,
+                v.tvDate,v.tvName,v.tvSize,v.tvCount,v.tvNo,v.tvTotal,v.ivShare,v.ivFav,v.ivFile,v.ivDown);
     }
     @Override
     public int getItemCount() {
