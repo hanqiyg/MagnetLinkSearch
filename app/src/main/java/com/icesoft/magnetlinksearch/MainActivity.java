@@ -193,6 +193,8 @@ public class MainActivity extends AppCompatActivity
             case FavoriteFragment.FRAGMENT_TAG  : fragment = FavoriteFragment.newInstance(null);break;
             case SettingsFragment.FRAGMENT_TAG  : fragment = SettingsFragment.newInstance(null);break;
             case EmailFragment.FRAGMENT_TAG     : fragment = EmailFragment.newInstance(null);break;
+            case TopFragment.FRAGMENT_TAG       : fragment = TopFragment.newInstance(null);break;
+            case ShareFragment.FRAGMENT_TAG     : fragment = ShareFragment.newInstance(null);break;
             default: fragment = SearchFragment.newInstance(null);break;
         }
         return fragment;
@@ -205,7 +207,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        System.out.println("test:" + id);
         if (id == R.id.nav_search) {
             showFragment(SearchFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_fav) {
