@@ -41,5 +41,9 @@
     <string name="to_author">Dear author,</string>
     <string name="email">me@world.com</string>
     <string name="wait">Wait a minute.</string>
-    <string name="from_email">from</string>
+    <string name="from_email">From</string>
+    <string name="end">Best Regards.</string>
+    <string name="network_wifi">Connected to WIFI.</string>
+    <string name="network_mobile">Connected to cellular.</string>
+    <string name="network_none">Disconnected.</string>
 </resources>

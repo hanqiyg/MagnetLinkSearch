@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="type">
-        <item>Chit Chat</item>
-        <item>Bug Report</item>
-        <item>Features Propose</item>
-        <item>Share News</item>
+        <item>I want have a Chat with you.</item>
+        <item>I want report a Bug to you.</item>
+        <item>I want some wonderful idea.</item>
+        <item>I want share something.</item>
     </string-array>
 </resources>

@@ -1,17 +1,22 @@
 package com.icesoft.magnetlinksearch.fragments;
 
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.*;
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import butterknife.BindView;
 import butterknife.OnClick;
 import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.dialogs.WaitDialogFragment;
-import com.icesoft.magnetlinksearch.mail.SendMailUtils;
-import com.icesoft.magnetlinksearch.tasks.SendMailAsyncTask;
+import com.icesoft.magnetlinksearch.events.MailEvent;
+import com.icesoft.magnetlinksearch.mail.SendMailIntentService;
 import com.icesoft.magnetlinksearch.utils.StringUtils;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 
 public class EmailFragment extends BaseFragment {
@@ -23,16 +28,27 @@ public class EmailFragment extends BaseFragment {
     EditText fromAddress;
     @BindView(R.id.select)
     Spinner type;
-    SendMailAsyncTask sendMailAsyncTask;
-    WaitDialogFragment dialogFragment;
+
+    @BindView(R.id.submit)
+    Button submit;
     @OnClick(R.id.submit)
     public void submit(){
+        Log.d(FRAGMENT_TAG,"submit");
         String message = StringUtils.checkContent(content.getText().toString());
         String email = StringUtils.checkEmail(fromAddress.getText().toString());
         if(message != null && email != null){
-            sendMailAsyncTask = new SendMailAsyncTask((AppCompatActivity) mActivity);
-            sendMailAsyncTask.execute(msgType,String.format("%s\r\n\r\n%s",message,email));
+            Log.d(FRAGMENT_TAG,message + email);
+            Intent intent = new Intent(context, SendMailIntentService.class);
+            intent.putExtra(SendMailIntentService.TITLE, msgType);
+            intent.putExtra(SendMailIntentService.CONTENT, String.format("%s \r\n %s",message,email));
+            context.startService(intent);
+        }else{
+            Log.d(FRAGMENT_TAG,"error");
         }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSuccess(MailEvent event){
+        Log.d(FRAGMENT_TAG,"SendMail: " + (event.success?"success":"failure"));
     }
 
     @Override
@@ -91,10 +107,9 @@ public class EmailFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(sendMailAsyncTask != null){
-            sendMailAsyncTask.cancel(true);
-        }
     }
-
-
+    @Override
+    public void online() { submit.setEnabled(true); }
+    @Override
+    public void offline() {submit.setEnabled(false);}
 }

@@ -31,7 +31,7 @@ public class MailSender {
      * 以文本格式发送邮件
      * @param mailInfo 待发送的邮件的信息
      */
-    public boolean sendTextMail(final MailInfo mailInfo) {
+    public static boolean sendTextMail(final MailInfo mailInfo) {
 
         // 判断是否需要身份认证
         MyAuthenticator authenticator = null;

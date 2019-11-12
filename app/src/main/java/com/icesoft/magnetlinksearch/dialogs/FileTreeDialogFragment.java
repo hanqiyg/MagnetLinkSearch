@@ -22,6 +22,11 @@ import org.json.JSONObject;
 public class FileTreeDialogFragment extends BaseDialogFragment {
     public static final String FRAGMENT_TAG = FileTreeDialogFragment.class.getSimpleName();
     public static final String ID = "id";
+    public static final String DATE = "date";
+    public static final String NAME = "name";
+    public static final String SIZE = "size";
+    public static final String COUNT = "count";
+
     @BindView(R.id.tv_date)  TextView date;
     @BindView(R.id.tv_name)  TextView name;
     @BindView(R.id.tv_size)  TextView size;
@@ -69,31 +74,24 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
                 FileTreeDialogFragment.this.dismiss();
             }
         });
+
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, FormatUtils.shareText(r));
-                sendIntent.setType("text/plain");
-                context.startActivity(sendIntent);
+                ViewUtils.share(context,r);
             }
         });
+        ViewUtils.setfav(fav,dao.exist(r.id));
         fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ViewUtils.setFav(fav,getDao().set(r));
+                ViewUtils.fav(context,r,getDao(),fav,null,-1);
             }
         });
         down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(r != null && r.id != null){
-                    Intent intent = new Intent();
-                    Uri content_url = Uri.parse(FormatUtils.magnetFromId(r.id));
-                    intent.setData(content_url);
-                    context.startActivity(intent);
-                }
+                ViewUtils.down(context,r);
             }
         });
     }
@@ -102,18 +100,19 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
     void initData() {
         if (bundle != null){
             String id = bundle.getString(ID);
+
+            date.setText(FormatUtils.formatDate(bundle.getString(DATE)));
+            name.setText(FormatUtils.htmlText(bundle.getString(NAME)));
+            size.setText(FormatUtils.formatSize(bundle.getLong(SIZE)));
+            count.setText(bundle.getLong(COUNT) + context.getString(R.string.file_unit));
+
             ViewUtils.setProgress(files,progress,message,ViewUtils.Status.Inprogress,getString(R.string.loading));
             String json = String.format(Constance.ID_SEARCH,id);
             ElasticRestClient.post(context, Constance.PATH,json,new JsonHttpResponseHandler() {
-                @SuppressLint("SetTextI18n")
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     r = Utils.JSON2ResultWithFiles(response);
                     if(r != null){
-                        date.setText(FormatUtils.formatDate(r.date));
-                        name.setText(FormatUtils.htmlText(r.name));
-                        size.setText(FormatUtils.formatSize(r.size));
-                        count.setText(r.count + context.getString(R.string.file_unit));
                         TreeNode root = TreeUtils.createTree(context,r.files);
                         AndroidTreeView tView = new AndroidTreeView(getActivity(), root);
                         files.addView(tView.getView());

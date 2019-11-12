@@ -1,8 +1,6 @@
 package com.icesoft.magnetlinksearch.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +23,12 @@ import java.util.List;
 
 public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
     private static final String T = ResultAdapter.class.getSimpleName();
-    private Context mActivity;
+    private Context context;
     private ResultFragment fragment;
     private List<Result> results = new ArrayList<>();
     private int total = 0;
     private int from = 0;
+    private ResultDao dao;
     public static class VH extends RecyclerView.ViewHolder{
         @BindView(R.id.tv_date)  TextView date;
         @BindView(R.id.tv_name)  TextView name;
@@ -49,7 +48,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
         }
     }
     public ResultAdapter(Context activity, ResultFragment fragment){
-        this.mActivity = activity;
+        this.context = activity;
         this.fragment = fragment;
     }
     @NonNull
@@ -62,43 +61,20 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
     private AlertDialog.Builder builder;
     @Override
     public void onBindViewHolder(@NonNull VH v, int position) {
-        ResultDao dao = new ResultDao(mActivity);
         Result r = results.get(position);
         v.date.setText(FormatUtils.formatDate(r.date));
         v.name.setText(FormatUtils.htmlText(r.name));
         v.size.setText(FormatUtils.formatSize(r.size));
-        v.count.setText(String.valueOf(r.count) + " item(s)");
+        v.count.setText(String.valueOf(r.count) + context.getString(R.string.file_unit));
         v.no.setText(String.valueOf(position + 1));
         v.total.setText(String.valueOf(total));
 
-        setFav(v.fav,dao.exist(r.id));
-        v.share.setOnClickListener(view -> {
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, FormatUtils.shareText(r));
-            sendIntent.setType("text/plain");
-            mActivity.startActivity(sendIntent);
-        });
-        v.fav.setOnClickListener(view -> {
-            setFav(v.fav,dao.set(r));
-            notifyItemChanged(position);
-        });
-        v.file.setOnClickListener(view -> ViewUtils.gotoInfoDialogFragment(mActivity,r.id));
-        v.down.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            Uri content_url = Uri.parse(FormatUtils.magnetFromId(r.id));
-            intent.setData(content_url);
-            mActivity.startActivity(intent);
-        });
+        ViewUtils.setfav(v.fav,dao.exist(r.id));
+        v.share.setOnClickListener(view -> {    ViewUtils.share(context,r);});
+        v.fav.setOnClickListener(view -> {      ViewUtils.fav(context,r,getDao(),v.fav,this,position);});
+        v.file.setOnClickListener(view ->       ViewUtils.file(context,r));
+        v.down.setOnClickListener(view ->       ViewUtils.down(context,r));
     }
-    public void setFav(ImageView fav, boolean b){
-        if(b){
-            fav.setImageResource(R.drawable.ic_favorite_red_24dp);
-        }else{
-            fav.setImageResource(R.drawable.ic_favorite_black_24dp);
-        }
-    }
-
     @Override
     public int getItemCount() {
         return results==null?0:results.size();
@@ -111,6 +87,12 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
             this.from = results.size();
             notifyDataSetChanged();
         }
+    }
+    public ResultDao getDao(){
+        if(dao == null){
+            dao = new ResultDao(context);
+        }
+        return dao;
     }
 
     public void addData(List<Result> more) {

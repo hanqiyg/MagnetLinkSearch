@@ -61,37 +61,4 @@ public class ElasticRestClient {
             e.printStackTrace();
        }
     }
-
-    public void getHttpRequest() {
-        try {
-            ElasticRestClient.get("get", null, new JsonHttpResponseHandler() { // instead of 'get' use twitter/tweet/1
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    // If the response is JSONObject instead of expected JSONArray
-                    Log.i(CLASS_NAME, "onSuccess: " + response.toString());
-                }
-
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                    Log.i(CLASS_NAME, "onSuccess: " + response.toString());
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    super.onFailure(statusCode, headers, responseString, throwable);
-                    Log.e(CLASS_NAME, "onFailure");
-                    // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                }
-
-                @Override
-                public void onRetry(int retryNo) {
-                    Log.i(CLASS_NAME, "onRetry " + retryNo);
-                    // called when request is retried
-                }
-            });
-        }
-        catch (Exception e){
-            Log.e(CLASS_NAME, e.getLocalizedMessage());
-        }
-    }
 }

@@ -2,8 +2,6 @@ package com.icesoft.magnetlinksearch.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,25 +54,11 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH>{
         v.no.setText(String.valueOf(position + 1));
         v.total.setText(String.valueOf(total));
 
-        ViewUtils.setFav(v.fav,getDao().exist(r.id));
-        v.share.setOnClickListener(view -> {
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, FormatUtils.shareText(r));
-            sendIntent.setType("text/plain");
-            context.startActivity(sendIntent);
-        });
-        v.fav.setOnClickListener(view -> {
-            ViewUtils.setFav(v.fav,getDao().set(r));
-            notifyItemChanged(position);
-        });
-        v.file.setOnClickListener(view -> ViewUtils.gotoInfoDialogFragment(context,r.id));
-        v.down.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            Uri content_url = Uri.parse(FormatUtils.magnetFromId(r.id));
-            intent.setData(content_url);
-            context.startActivity(intent);
-        });
+        ViewUtils.setfav(v.fav,getDao().exist(r.id));
+        v.share.setOnClickListener(view -> {ViewUtils.share(context,r);});
+        v.fav.setOnClickListener(view -> {  ViewUtils.fav(context,r,getDao(),v.fav,this,position);});
+        v.file.setOnClickListener(view ->   ViewUtils.file(context,r));
+        v.down.setOnClickListener(view -> { ViewUtils.down(context,r);});
     }
     @Override
     public int getItemCount() {

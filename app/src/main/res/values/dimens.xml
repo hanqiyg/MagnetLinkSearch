@@ -9,4 +9,7 @@
     <dimen name="item_space_right">0dp</dimen>
     <dimen name="item_space_bottom">2dp</dimen>
     <dimen name="item_pading_tree">10dp</dimen>
+    <dimen name="mail_margin_top">10dp</dimen>
+    <dimen name="mail_margin_end">20dp</dimen>
+    <dimen name="mail_margin_start">20dp</dimen>
 </resources>

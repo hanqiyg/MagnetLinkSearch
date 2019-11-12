@@ -46,11 +46,7 @@ public class SearchFragment extends BaseFragment {
     protected LinearLayout message;
 
     @OnClick(R.id.btn_search)
-    public void onClickBtnSearch(){
-        search();
-    }
-
-
+    public void onClickBtnSearch(){search();}
 
     @Override
     int getLayoutResourceID() {
@@ -64,7 +60,7 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     void initView() {
-        final Markwon markwon = Markwon.builder(mActivity).usePlugin(HtmlPlugin.create()).build();
+        final Markwon markwon = Markwon.builder(context).usePlugin(HtmlPlugin.create()).build();
         markwon.setMarkdown(tvTitle,getString(R.string.title));
         markwon.setMarkdown(tvQuote,getString(R.string.quote));
         btnSearch.setEnabled(false);
@@ -78,7 +74,7 @@ public class SearchFragment extends BaseFragment {
         etSearch.setFocusable(true);
         etSearch.setFocusableInTouchMode(true);
         etSearch.requestFocus();
-        etSearch.setFilters(new InputFilter[]{ new TextLengthFilter(mActivity,message,tvWarn,btnSearch,3,15)});
+        etSearch.setFilters(new InputFilter[]{ new TextLengthFilter(context,message,tvWarn,btnSearch,3,15)});
     }
 
     @Override
@@ -101,7 +97,7 @@ public class SearchFragment extends BaseFragment {
         String keywords = etSearch.getText().toString().trim();
         if (keywords.length() > 0) {
             etSearch.clearFocus();
-            KeybordUtil.hideKeyboard((AppCompatActivity) mActivity);
+            KeybordUtil.hideKeyboard((AppCompatActivity) context);
             String safe = Utils.secureKeywords(keywords);
             EventBus.getDefault().postSticky(new QueryEvent(safe));
             EventBus.getDefault().post(new ShowFragmentEvent(ResultFragment.FRAGMENT_TAG));
@@ -128,5 +124,15 @@ public class SearchFragment extends BaseFragment {
     @Override
     String getBackStack() {
         return null;
+    }
+
+    @Override
+    public void online() {
+        btnSearch.setEnabled(true);
+    }
+
+    @Override
+    public void offline() {
+        btnSearch.setEnabled(false);
     }
 }

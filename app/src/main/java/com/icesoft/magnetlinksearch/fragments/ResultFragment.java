@@ -59,8 +59,8 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
 
     @Override
     void initView() {
-        adapter = new ResultAdapter(mActivity,this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        adapter = new ResultAdapter(context,this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(
                 getResources().getDimensionPixelSize(R.dimen.item_space_left),
@@ -83,7 +83,7 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
         ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Inprogress,getString(R.string.loading));
         @SuppressLint("DefaultLocale")
         String json = String.format(Constance.CONTEXT_JSON,q,Constance.QUERY_FROM,Constance.QUERY_LIMIT);
-        ElasticRestClient.post(mActivity,Constance.PATH,json,new JsonHttpResponseHandler() {
+        ElasticRestClient.post(context,Constance.PATH,json,new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 List<Result> results = Utils.JSON2Result(response);
@@ -122,7 +122,7 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
         @SuppressLint("DefaultLocale")
         String json = String.format(Constance.CONTEXT_JSON, q,adapter.getFrom(),Constance.QUERY_LIMIT);
-        ElasticRestClient.post(mActivity, Constance.PATH, json, new JsonHttpResponseHandler() {
+        ElasticRestClient.post(context, Constance.PATH, json, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 List<Result> data = Utils.JSON2Result(response);

@@ -45,8 +45,8 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
 
     @Override
     void initView() {
-        adapter = new FavoriteAdapter(mActivity,this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        adapter = new FavoriteAdapter(context,this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(
                 getResources().getDimensionPixelSize(R.dimen.item_space_left),
@@ -115,7 +115,7 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
 
     private ResultDao getDao() {
         if(null == dao){
-            dao = new ResultDao(mActivity);
+            dao = new ResultDao(context);
         }
         return dao;
     }
