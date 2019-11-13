@@ -184,6 +184,17 @@ public class MainActivity extends AppCompatActivity
         }
         tx.show(fragment);
         tx.commit();
+        setNavItemChecked(fragment.getTag());
+    }
+    private void setNavItemChecked(String tag){
+        switch (tag){
+            case FavoriteFragment.FRAGMENT_TAG  : navigationView.setCheckedItem(R.id.nav_fav);;break;
+            case SettingsFragment.FRAGMENT_TAG  : navigationView.setCheckedItem(R.id.nav_manage);;break;
+            case EmailFragment.FRAGMENT_TAG     : navigationView.setCheckedItem(R.id.nav_send);;break;
+            case TopFragment.FRAGMENT_TAG       : navigationView.setCheckedItem(R.id.nav_slideshow);break;
+            case ShareFragment.FRAGMENT_TAG     : navigationView.setCheckedItem(R.id.nav_share);break;
+            default: navigationView.setCheckedItem(R.id.nav_search);break;
+        }
     }
 
     private Fragment initFragment(String tag) {

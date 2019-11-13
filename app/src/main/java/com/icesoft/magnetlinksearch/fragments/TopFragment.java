@@ -8,7 +8,7 @@ import com.icesoft.magnetlinksearch.R;
 
 public class TopFragment extends BaseFragment{
     public static final String FRAGMENT_TAG = "TopFragment";
-    public static final String URL = "https://www.baidu.com";
+    public static final String URL = "https://www.163.com/";
     @BindView(R.id.webView)
     WebView webView;
     @Override
