@@ -50,9 +50,6 @@ public class ViewUtils {
             sendIntent.putExtra(Intent.EXTRA_TEXT, FormatUtils.shareText(result));
             sendIntent.setType("text/plain");
             context.startActivity(sendIntent);
-/*            String URL = "/share";
-            String jsonString = "{\"id\" : \"%s\"  , \"imei\" : 28}";
-            ElasticRestClient.post(context,URL,jsonString,new JsonHttpResponseHandler());*/
         }
     }
     public static void fav(Context context, Result result, ResultDao dao, ImageView fav, RecyclerView.Adapter adapter, int position){
@@ -62,6 +59,7 @@ public class ViewUtils {
         if(adapter != null && position >=0){
             adapter.notifyItemChanged(position);
         }
+        PostOpsUtils.postFavorite(context,result.id);
     }
     public static void setfav(ImageView fav,boolean b){
         if(b){

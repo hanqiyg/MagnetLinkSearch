@@ -1,5 +1,6 @@
 package com.icesoft.magnetlinksearch.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.inputmethod.EditorInfo;
@@ -15,6 +16,7 @@ import com.icesoft.magnetlinksearch.events.ShowFragmentEvent;
 import com.icesoft.magnetlinksearch.customs.filters.TextLengthFilter;
 import com.icesoft.magnetlinksearch.events.QueryEvent;
 import com.icesoft.magnetlinksearch.utils.ElasticRestClient;
+import com.icesoft.magnetlinksearch.utils.FormatUtils;
 import com.icesoft.magnetlinksearch.utils.KeybordUtil;
 import com.icesoft.magnetlinksearch.utils.Utils;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -105,13 +107,14 @@ public class SearchFragment extends BaseFragment {
     }
     public void updateTotalCount(){
         ElasticRestClient.get("/test/_count",null,new JsonHttpResponseHandler() {
+            @SuppressLint("ResourceType")
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 if (statusCode == 200) {
                     try {
                         long count = response.getLong("count");
                         if(tvInfo!=null){
-                            tvInfo.setText(String.valueOf(count));
+                            tvInfo.setText(String.format(getResources().getString(R.string.total_count), FormatUtils.formatNum(count)));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

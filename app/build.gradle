@@ -46,7 +46,7 @@ dependencies {
     implementation "io.noties.markwon:core:4.1.2"
     implementation "io.noties.markwon:html:4.1.2"
     implementation 'com.carson_ho:Super_EditText:1.0.0'
-    implementation 'com.google.firebase:firebase-ads:18.2.0'
+    implementation 'com.google.firebase:firebase-ads:18.3.0'
     implementation 'com.github.bmelnychuk:atv:1.2.9'
     implementation 'org.greenrobot:eventbus:3.1.1'
 }

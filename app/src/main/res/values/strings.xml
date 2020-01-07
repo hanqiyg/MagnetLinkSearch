@@ -33,10 +33,9 @@
     <string name="loaded">Loading finish.</string>
     <string name="network_error">Load fails.</string>
     <string name="file_unit" formatted="true">%d files</string>
-    <string name="slideshow">SlideShow</string>
     <string name="Communication">Communication</string>
-    <string name="share">Share</string>
-    <string name="send">Send</string>
+    <string name="share">Share App</string>
+    <string name="send">To Author</string>
     <string name="report_content">Content</string>
     <string name="to_author">Dear author,</string>
     <string name="email">me@world.com</string>
@@ -46,4 +45,6 @@
     <string name="network_wifi">Connected to WIFI.</string>
     <string name="network_mobile">Connected to cellular.</string>
     <string name="network_none">Disconnected.</string>
+    <string name="nav_website">Website</string>
+    <string name="total_count">%1$s magnets in our database.</string>
 </resources>

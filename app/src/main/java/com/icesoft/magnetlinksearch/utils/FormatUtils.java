@@ -14,26 +14,51 @@ public class FormatUtils {
         return context;
     }
     public static String formatSize(long size){
+        final int carry = 1024;
         long rest = 0;
-        if(size < 1024){
+        if(size < carry){
             return String.valueOf(size) + "B";
         }else{
-            size /= 1024;
+            size /= carry;
         }
 
-        if(size < 1024){
+        if(size < carry){
             return String.valueOf(size) + "KB";
         }else{
-            rest = size % 1024;
-            size /= 1024;
+            rest = size % carry;
+            size /= carry;
         }
 
-        if(size < 1024){
+        if(size < carry){
             size = size * 100;
-            return String.valueOf((size / 100)) + "." + String.valueOf((rest * 100 / 1024 % 100)) + "MB";
+            return String.valueOf((size / 100)) + "." + String.valueOf((rest * 100 / carry % 100)) + "MB";
         }else{
-            size = size * 100 / 1024;
+            size = size * 100 / carry;
             return String.valueOf((size / 100)) + "." + String.valueOf((size % 100)) + "GB";
+        }
+    }
+    public static String formatNum(long size){
+        final int carry = 1000;
+        long rest = 0;
+        if(size < carry){
+            return String.valueOf(size) + "";
+        }else{
+            size /= carry;
+        }
+
+        if(size < carry){
+            return String.valueOf(size) + "K";
+        }else{
+            rest = size % carry;
+            size /= carry;
+        }
+
+        if(size < carry){
+            size = size * 100;
+            return String.valueOf((size / 100)) + "." + String.valueOf((rest * 100 / carry % 100)) + "M";
+        }else{
+            size = size * 100 / carry;
+            return String.valueOf((size / 100)) + "." + String.valueOf((size % 100)) + "G";
         }
     }
     public static Spanned htmlText(String text){

@@ -6,6 +6,12 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
     <include layout="@layout/include_title"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            tools:text="test"
+            android:id="@+id/tv_info"/>
     <scut.carson_ho.diy_view.SuperEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,10 +66,4 @@
           android:layout_gravity="center_horizontal"
           android:layout_marginTop="10dp"
     />-->
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            tools:text="test"
-            android:id="@+id/tv_info"/>
 </LinearLayout>

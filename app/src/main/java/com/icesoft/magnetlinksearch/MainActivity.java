@@ -184,17 +184,6 @@ public class MainActivity extends AppCompatActivity
         }
         tx.show(fragment);
         tx.commit();
-        setNavItemChecked(fragment.getTag());
-    }
-    private void setNavItemChecked(String tag){
-        switch (tag){
-            case FavoriteFragment.FRAGMENT_TAG  : navigationView.setCheckedItem(R.id.nav_fav);;break;
-            case SettingsFragment.FRAGMENT_TAG  : navigationView.setCheckedItem(R.id.nav_manage);;break;
-            case EmailFragment.FRAGMENT_TAG     : navigationView.setCheckedItem(R.id.nav_send);;break;
-            case TopFragment.FRAGMENT_TAG       : navigationView.setCheckedItem(R.id.nav_slideshow);break;
-            case ShareFragment.FRAGMENT_TAG     : navigationView.setCheckedItem(R.id.nav_share);break;
-            default: navigationView.setCheckedItem(R.id.nav_search);break;
-        }
     }
 
     private Fragment initFragment(String tag) {
@@ -204,7 +193,7 @@ public class MainActivity extends AppCompatActivity
             case FavoriteFragment.FRAGMENT_TAG  : fragment = FavoriteFragment.newInstance(null);break;
             case SettingsFragment.FRAGMENT_TAG  : fragment = SettingsFragment.newInstance(null);break;
             case EmailFragment.FRAGMENT_TAG     : fragment = EmailFragment.newInstance(null);break;
-            case TopFragment.FRAGMENT_TAG       : fragment = TopFragment.newInstance(null);break;
+            case WebsiteFragment.FRAGMENT_TAG   : fragment = WebsiteFragment.newInstance(null);break;
             case ShareFragment.FRAGMENT_TAG     : fragment = ShareFragment.newInstance(null);break;
             default: fragment = SearchFragment.newInstance(null);break;
         }
@@ -222,10 +211,10 @@ public class MainActivity extends AppCompatActivity
             showFragment(SearchFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_fav) {
             showFragment(FavoriteFragment.FRAGMENT_TAG);
-        } else if (id == R.id.nav_slideshow) {
-            showFragment(TopFragment.FRAGMENT_TAG);
-        } else if (id == R.id.nav_manage) {
-            showFragment(SettingsFragment.FRAGMENT_TAG);
+        } else if (id == R.id.nav_website) {
+            showFragment(WebsiteFragment.FRAGMENT_TAG);
+/*        } else if (id == R.id.nav_manage) {
+            showFragment(SettingsFragment.FRAGMENT_TAG);*/
         } else if (id == R.id.nav_share) {
             showFragment(ShareFragment.FRAGMENT_TAG);
         } else if (id == R.id.nav_send) {

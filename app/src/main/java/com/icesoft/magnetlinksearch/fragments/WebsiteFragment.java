@@ -6,9 +6,9 @@ import android.widget.EditText;
 import butterknife.BindView;
 import com.icesoft.magnetlinksearch.R;
 
-public class TopFragment extends BaseFragment{
+public class WebsiteFragment extends BaseFragment{
     public static final String FRAGMENT_TAG = "TopFragment";
-    public static final String URL = "https://www.163.com/";
+    public static final String URL = "https://hanqiyg.github.io/";
     @BindView(R.id.webView)
     WebView webView;
     @Override
@@ -41,8 +41,8 @@ public class TopFragment extends BaseFragment{
         return SearchFragment.FRAGMENT_TAG;
     }
 
-    public static TopFragment newInstance(String text){
-        TopFragment fragment = new TopFragment();
+    public static WebsiteFragment newInstance(String text){
+        WebsiteFragment fragment = new WebsiteFragment();
         Bundle bundle = new Bundle();
         bundle.putString(KEY,text);
         fragment.setArguments(bundle);
