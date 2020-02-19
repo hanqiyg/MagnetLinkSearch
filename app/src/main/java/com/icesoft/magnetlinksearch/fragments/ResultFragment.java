@@ -14,7 +14,6 @@ import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.adapters.ResultAdapter;
 import com.icesoft.magnetlinksearch.customs.SpacesItemDecoration;
 import com.icesoft.magnetlinksearch.events.QueryEvent;
-import com.icesoft.magnetlinksearch.models.Query;
 import com.icesoft.magnetlinksearch.models.Result;
 import com.icesoft.magnetlinksearch.utils.ElasticRestClient;
 import com.icesoft.magnetlinksearch.utils.Utils;

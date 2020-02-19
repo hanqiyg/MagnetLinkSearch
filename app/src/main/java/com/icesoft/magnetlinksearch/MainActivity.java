@@ -4,16 +4,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.*;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -26,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.icesoft.magnetlinksearch.ads.AdsListener;
 import com.icesoft.magnetlinksearch.events.BackPressedEvent;
 import com.icesoft.magnetlinksearch.events.ExitEvent;
 import com.icesoft.magnetlinksearch.events.ShowFragmentEvent;
@@ -40,6 +38,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String T = MainActivity.class.getSimpleName();
+    private static final String ADS = "admob";
     private static final String LAST_FRAGMENT_TAG = "LAST_FRAGMENT_TAG";
     private long back;
 
@@ -54,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     Toolbar toolbar;
     @BindView(R.id.nav_view)
     NavigationView navigationView;
+    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,14 +78,19 @@ public class MainActivity extends AppCompatActivity
         init(savedInstanceState);
     }
     public void initAds(){
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+        MobileAds.initialize(this);
+        mAdView.loadAd(new AdRequest.Builder().build());
+        mAdView.setAdListener(new AdsListener("Banner"));
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_unitId));
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mInterstitialAd.setAdListener(new AdListener(){
             @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                Log.d(T,"onInitializationComplete");
+            public void onAdClosed() {
+                super.onAdClosed();
             }
         });
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
     }
     public void mIntent(){
         Intent intent = getIntent();
@@ -104,11 +109,10 @@ public class MainActivity extends AppCompatActivity
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBackPressedEvent(ExitEvent event) {
-        long now = System.currentTimeMillis();
-        if (now - back > 3000) {
-            back = now;
-            Toast.makeText(this, R.string.click_twice, Toast.LENGTH_SHORT).show();
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
         } else {
+            Log.d(T, "The interstitial wasn't loaded yet.");
             super.onBackPressed();
         }
     }

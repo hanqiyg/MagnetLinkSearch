@@ -102,7 +102,7 @@ public class SearchFragment extends BaseFragment {
             KeybordUtil.hideKeyboard((AppCompatActivity) context);
             String safe = Utils.secureKeywords(keywords);
             EventBus.getDefault().postSticky(new QueryEvent(safe));
-            EventBus.getDefault().post(new ShowFragmentEvent(ResultFragment.FRAGMENT_TAG));
+            EventBus.getDefault().post(new ShowFragmentEvent(ResultFragment2.FRAGMENT_TAG));
         }
     }
     public void updateTotalCount(){

@@ -13,6 +13,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.fragments.ResultFragment;
+import com.icesoft.magnetlinksearch.fragments.ResultFragment2;
 import com.icesoft.magnetlinksearch.models.Result;
 import com.icesoft.magnetlinksearch.sqlites.ResultDao;
 import com.icesoft.magnetlinksearch.utils.ViewUtils;
