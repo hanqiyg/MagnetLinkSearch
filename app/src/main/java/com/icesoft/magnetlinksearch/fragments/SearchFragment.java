@@ -1,8 +1,8 @@
 package com.icesoft.magnetlinksearch.fragments;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,21 +11,23 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icesoft.magnetlinksearch.R;
-import com.icesoft.magnetlinksearch.events.ShowFragmentEvent;
 import com.icesoft.magnetlinksearch.customs.filters.TextLengthFilter;
 import com.icesoft.magnetlinksearch.events.QueryEvent;
-import com.icesoft.magnetlinksearch.utils.ElasticRestClient;
+import com.icesoft.magnetlinksearch.events.ShowFragmentEvent;
+import com.icesoft.magnetlinksearch.mappers.EsCount;
+import com.icesoft.magnetlinksearch.utils.ElasticUtils;
 import com.icesoft.magnetlinksearch.utils.FormatUtils;
 import com.icesoft.magnetlinksearch.utils.KeybordUtil;
 import com.icesoft.magnetlinksearch.utils.Utils;
-import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.TextHttpResponseHandler;
 import cz.msebera.android.httpclient.Header;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.html.HtmlPlugin;
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import java.io.IOException;
 
 
 public class SearchFragment extends BaseFragment {
@@ -102,26 +104,11 @@ public class SearchFragment extends BaseFragment {
             KeybordUtil.hideKeyboard((AppCompatActivity) context);
             String safe = Utils.secureKeywords(keywords);
             EventBus.getDefault().postSticky(new QueryEvent(safe));
-            EventBus.getDefault().post(new ShowFragmentEvent(ResultFragment2.FRAGMENT_TAG));
+            EventBus.getDefault().post(new ShowFragmentEvent(ResultFragment.FRAGMENT_TAG));
         }
     }
-    public void updateTotalCount(){
-        ElasticRestClient.get("/test/_count",null,new JsonHttpResponseHandler() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                if (statusCode == 200) {
-                    try {
-                        long count = response.getLong("count");
-                        if(tvInfo!=null){
-                            tvInfo.setText(String.format(getResources().getString(R.string.total_count), FormatUtils.formatNum(count)));
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
+    public void updateTotalCount() {
+        ElasticUtils.getMagnetCount(context,tvInfo);
     }
 
     @Override

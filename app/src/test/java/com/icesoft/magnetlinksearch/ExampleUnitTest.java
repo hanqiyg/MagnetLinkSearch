@@ -1,5 +1,6 @@
 package com.icesoft.magnetlinksearch;
 
+import com.icesoft.magnetlinksearch.utils.ElasticRestClient;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

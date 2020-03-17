@@ -47,4 +47,5 @@
     <string name="network_none">Disconnected.</string>
     <string name="nav_website">Website</string>
     <string name="total_count">%1$s magnets in our database.</string>
+    <string name="MapperError">Mapper Exception: %1$s.</string>
 </resources>

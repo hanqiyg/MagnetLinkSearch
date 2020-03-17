@@ -21,14 +21,13 @@ import com.icesoft.magnetlinksearch.utils.ViewUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
-    private static final String T = ResultAdapter.class.getSimpleName();
+public class MagnetAdapter extends RecyclerView.Adapter<MagnetAdapter.VH>{
+    private static final String T = MagnetAdapter.class.getSimpleName();
     private Context context;
     private ResultFragment fragment;
-    private List<Result> results = new ArrayList<>();
+    private List<Magnet> results = new ArrayList<>();
     private int total = 0;
     private int from = 0;
-    private ResultDao dao;
 
     public static class VH extends RecyclerView.ViewHolder{
         @BindView(R.id.tv_date)  TextView tvDate;
@@ -48,7 +47,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
             ButterKnife.bind(this, v);
         }
     }
-    public ResultAdapter(Context activity, ResultFragment fragment){
+    public MagnetAdapter(Context activity, ResultFragment fragment){
         this.context = activity;
         this.fragment = fragment;
     }
@@ -62,7 +61,8 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH>{
     private AlertDialog.Builder builder;
     @Override
     public void onBindViewHolder(@NonNull VH v, int position) {
-        Result r = results.get(position);
+        Magnet r = results.get(position);
+        
         ViewUtils.setResultView(context,r,getDao(),this,position,total,
                 v.tvDate,v.tvName,v.tvSize,v.tvCount,v.tvNo,v.tvTotal,v.ivShare,v.ivFav,v.ivFile,v.ivDown);
     }

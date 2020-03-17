@@ -15,47 +15,6 @@ import java.util.Enumeration;
 public class PostOpsUtils {
     private static final String TAG = "PostOpsUtils";
     private static final String LOG = "statusCode: %d , headers: %s , response %s .";
-    public static void postFavorite(Context context,String documentId){
-        String deviceId = macAddress();
-        String url = String.format("/favorite/_doc/%s-%s",deviceId,documentId);
-        ElasticRestClient.post(context,url,"{}",new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                Log.d(TAG,String.format(LOG,statusCode,headers.toString(),response.toString()));
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                super.onSuccess(statusCode, headers, response);
-                Log.d(TAG,String.format(LOG,statusCode,headers.toString(),response.toString()));
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.d(TAG,String.format(LOG,statusCode,headers.toString(),errorResponse.toString()));
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.d(TAG,String.format(LOG,statusCode,headers.toString(),errorResponse.toString()));
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-                Log.d(TAG,String.format(LOG,statusCode,headers.toString(),responseString));
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                super.onSuccess(statusCode, headers, responseString);
-                Log.d(TAG,String.format(LOG,statusCode,headers.toString(),responseString));
-            }
-        });
-    }
     public static String macAddress(){
         String address = null;
         // 把当前机器上的访问网络接口的存入 Enumeration集合中

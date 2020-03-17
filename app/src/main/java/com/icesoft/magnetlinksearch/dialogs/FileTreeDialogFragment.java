@@ -1,27 +1,16 @@
 package com.icesoft.magnetlinksearch.dialogs;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import butterknife.BindView;
-import com.icesoft.magnetlinksearch.Constance;
 import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.models.Result;
-import com.icesoft.magnetlinksearch.models.ResultWithFiles;
 import com.icesoft.magnetlinksearch.sqlites.ResultDao;
-import com.icesoft.magnetlinksearch.utils.ElasticRestClient;
-import com.icesoft.magnetlinksearch.utils.TreeUtils;
-import com.icesoft.magnetlinksearch.utils.Utils;
-import com.icesoft.magnetlinksearch.utils.ViewUtils;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.unnamed.b.atv.model.TreeNode;
-import com.unnamed.b.atv.view.AndroidTreeView;
-import cz.msebera.android.httpclient.Header;
-import org.json.JSONObject;
+import com.icesoft.magnetlinksearch.utils.ElasticUtils;
 
 public class FileTreeDialogFragment extends BaseDialogFragment {
     public static final String FRAGMENT_TAG = FileTreeDialogFragment.class.getSimpleName();
@@ -94,32 +83,8 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
     @Override
     void initData() {
         r = getResult(bundle);
-        if(r != null){
-            ViewUtils.setResultView(context,r,getDao(),null,-1,1,
-                    tvDate,tvName,tvSize,tvCount,null,null,ivShare,ivFav,null,ivDown);
-            ViewUtils.setProgress(svFiles,progress,message,ViewUtils.Status.Inprogress,getString(R.string.loading));
-            String json = String.format(Constance.ID_SEARCH,r.id);
-            ElasticRestClient.post(context, Constance.PATH,json,new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    ResultWithFiles rf = Utils.JSON2ResultWithFiles(response);
-                    if(rf != null){
-                        TreeNode root = TreeUtils.createTree(context,rf.files);
-                        AndroidTreeView tView = new AndroidTreeView(getActivity(), root);
-                        svFiles.addView(tView.getView());
-                        ViewUtils.setProgress(svFiles,progress,message,ViewUtils.Status.Success,getString(R.string.loaded));
-                    }else{
-                        ViewUtils.setProgress(svFiles,progress,message,ViewUtils.Status.Failure,getString(R.string.nodata));
-                    }
-                }
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    Log.d(FRAGMENT_TAG, errorResponse != null ? errorResponse.toString() : "null");
-                    ViewUtils.setProgress(svFiles,progress,message,ViewUtils.Status.Failure,getString(R.string.network_error));
-                }
-            });
-        }else{
-            ViewUtils.setProgress(svFiles,progress,message,ViewUtils.Status.Failure,getString(R.string.error));
+        if(r != null) {
+            ElasticUtils.getFilesById(getActivity(),svFiles,r.id);
         }
     }
 

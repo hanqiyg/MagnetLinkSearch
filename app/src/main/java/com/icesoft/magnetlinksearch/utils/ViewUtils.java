@@ -59,7 +59,6 @@ public class ViewUtils {
         if(adapter != null && position >=0){
             adapter.notifyItemChanged(position);
         }
-        PostOpsUtils.postFavorite(context,result.id);
     }
     public static void setfav(ImageView fav,boolean b){
         if(b){
