@@ -2,32 +2,24 @@ package com.icesoft.magnetlinksearch.fragments;
 
 import android.os.Bundle;
 import android.text.InputFilter;
-import android.util.Log;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.customs.filters.TextLengthFilter;
+import com.icesoft.magnetlinksearch.events.MagnetCountEvent;
 import com.icesoft.magnetlinksearch.events.QueryEvent;
 import com.icesoft.magnetlinksearch.events.ShowFragmentEvent;
-import com.icesoft.magnetlinksearch.mappers.EsCount;
 import com.icesoft.magnetlinksearch.utils.ElasticUtils;
-import com.icesoft.magnetlinksearch.utils.FormatUtils;
 import com.icesoft.magnetlinksearch.utils.KeybordUtil;
-import com.icesoft.magnetlinksearch.utils.Utils;
-import com.loopj.android.http.TextHttpResponseHandler;
-import cz.msebera.android.httpclient.Header;
+import com.icesoft.magnetlinksearch.utils.StringUtils;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.html.HtmlPlugin;
 import org.greenrobot.eventbus.EventBus;
-
-import java.io.IOException;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 
 public class SearchFragment extends BaseFragment {
@@ -102,13 +94,18 @@ public class SearchFragment extends BaseFragment {
         if (keywords.length() > 0) {
             etSearch.clearFocus();
             KeybordUtil.hideKeyboard((AppCompatActivity) context);
-            String safe = Utils.secureKeywords(keywords);
+            String safe = StringUtils.secureKeywords(keywords);
             EventBus.getDefault().postSticky(new QueryEvent(safe));
             EventBus.getDefault().post(new ShowFragmentEvent(ResultFragment.FRAGMENT_TAG));
         }
     }
     public void updateTotalCount() {
-        ElasticUtils.getMagnetCount(context,tvInfo);
+        ElasticUtils.getMagnetCount(context);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void onSearchFailEvent(MagnetCountEvent event){
+        tvInfo.setText(String.valueOf(event.count));
+        EventBus.getDefault().removeStickyEvent(event);
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Total {
     @JsonProperty(value = "value")
-    long value;
+    int value;
     @JsonProperty(value = "relation")
     String relation;
 
@@ -12,7 +12,7 @@ public class Total {
         return value;
     }
 
-    public void setValue(long value) {
+    public void setValue(int value) {
         this.value = value;
     }
 

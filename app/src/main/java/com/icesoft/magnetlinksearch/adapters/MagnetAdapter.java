@@ -1,21 +1,21 @@
 package com.icesoft.magnetlinksearch.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.icesoft.magnetlinksearch.App;
 import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.fragments.ResultFragment;
 import com.icesoft.magnetlinksearch.models.Magnet;
-import com.icesoft.magnetlinksearch.models.Result;
-import com.icesoft.magnetlinksearch.sqlites.ResultDao;
 import com.icesoft.magnetlinksearch.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -47,8 +47,8 @@ public class MagnetAdapter extends RecyclerView.Adapter<MagnetAdapter.VH>{
             ButterKnife.bind(this, v);
         }
     }
-    public MagnetAdapter(Context activity, ResultFragment fragment){
-        this.context = activity;
+    public MagnetAdapter(Context context, ResultFragment fragment){
+        this.context = context;
         this.fragment = fragment;
     }
     @NonNull
@@ -57,20 +57,28 @@ public class MagnetAdapter extends RecyclerView.Adapter<MagnetAdapter.VH>{
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_result, parent, false);
         return new VH(v);
     }
-
-    private AlertDialog.Builder builder;
     @Override
     public void onBindViewHolder(@NonNull VH v, int position) {
-        Magnet r = results.get(position);
-        
-        ViewUtils.setResultView(context,r,getDao(),this,position,total,
-                v.tvDate,v.tvName,v.tvSize,v.tvCount,v.tvNo,v.tvTotal,v.ivShare,v.ivFav,v.ivFile,v.ivDown);
+        final Magnet r = results.get(position);
+        if(r == null){return;}
+        v.tvName.setText(String.valueOf(r.getName()));
+        v.tvSize.setText(String.valueOf(r.getLength()));
+        v.tvCount.setText(String.valueOf(r.getCount()));
+        v.tvDate.setText(String.valueOf(r.getTimestamp()));
+        ViewUtils.showFav(v.ivFav,r);
+        v.ivShare.setOnClickListener(view -> ViewUtils.share(context,r));
+        v.ivFav.setOnClickListener(view ->  ViewUtils.fav(context,v.ivFav,this,position,r));
+        v.ivFile.setOnClickListener(view -> ViewUtils.file(context,r));
+        v.ivDown.setOnClickListener(view -> ViewUtils.down(context,r));
+
+        v.tvNo.setText(String.valueOf(position));
+        v.tvTotal.setText(String.valueOf(total));
     }
     @Override
     public int getItemCount() {
         return results==null?0:results.size();
     }
-    public void refresh(List<Result> newData, int total){
+    public void refresh(List<Magnet> newData, int total){
         if(newData != null && newData.size()>0){
             this.total = total;
             this.results.clear();
@@ -79,14 +87,7 @@ public class MagnetAdapter extends RecyclerView.Adapter<MagnetAdapter.VH>{
             notifyDataSetChanged();
         }
     }
-    public ResultDao getDao(){
-        if(dao == null){
-            dao = new ResultDao(context);
-        }
-        return dao;
-    }
-
-    public void addData(List<Result> more) {
+    public void addData(List<Magnet> more) {
         if(more != null && more.size()>0){
             int position = results.size();
             this.results.addAll(position, more);

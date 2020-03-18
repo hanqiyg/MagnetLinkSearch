@@ -2,6 +2,8 @@ package com.icesoft.magnetlinksearch.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,23 +14,22 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.icesoft.magnetlinksearch.App;
 import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.fragments.FavoriteFragment;
-import com.icesoft.magnetlinksearch.models.Result;
-import com.icesoft.magnetlinksearch.sqlites.ResultDao;
+import com.icesoft.magnetlinksearch.models.Magnet;
 import com.icesoft.magnetlinksearch.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH>{
-    private static final String FRAGMENT_TAG = FavoriteAdapter.class.getSimpleName();
+    private static final String T = FavoriteAdapter.class.getSimpleName();
     private Context context;
     private FavoriteFragment fragment;
-    private List<Result> results = new ArrayList<>();
+    private List<Magnet> results = new ArrayList<>();
     private int total;
     private int from;
-    private ResultDao dao;
 
     public FavoriteAdapter(Context context, FavoriteFragment fragment){
         this.context = context;
@@ -45,15 +46,25 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH>{
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull VH v, int position) {
-        Result r = results.get(position);
-        ViewUtils.setResultView(context,r,getDao(),this,position,total,
-                v.tvDate,v.tvName,v.tvSize,v.tvCount,v.tvNo,v.tvTotal,v.ivShare,v.ivFav,v.ivFile,v.ivDown);
+        final Magnet r = results.get(position);
+        if(r == null){return;}
+        v.tvName.setText(String.valueOf(r.getName()));
+        v.tvSize.setText(String.valueOf(r.getLength()));
+        v.tvCount.setText(String.valueOf(r.getCount()));
+        v.tvDate.setText(String.valueOf(r.getTimestamp()));
+        ViewUtils.showFav(v.ivFav,r);
+        v.ivShare.setOnClickListener(view -> ViewUtils.share(context,r));
+        v.ivFav.setOnClickListener(view ->  ViewUtils.fav(context,v.ivFav,this,position,r));
+        v.ivFile.setOnClickListener(view -> ViewUtils.file(context,r));
+        v.ivDown.setOnClickListener(view -> ViewUtils.down(context,r));
+        v.tvNo.setText(String.valueOf(position));
+        v.tvTotal.setText(String.valueOf(total));
     }
     @Override
     public int getItemCount() {
         return results==null?0:results.size();
     }
-    public void refresh(List<Result> newData, int total){
+    public void refresh(List<Magnet> newData, int total){
         this.total = total;
         results.clear();
         if(newData != null && newData.size()>0){
@@ -62,7 +73,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH>{
         }
         notifyDataSetChanged();
     }
-    public void addData(List<Result> more) {
+    public void addData(List<Magnet> more) {
         int position = results.size();
         results.addAll(position, more);
         from = results.size();
@@ -75,12 +86,6 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH>{
 
     public int getTotal(){
         return total;
-    }
-    public ResultDao getDao(){
-        if(dao == null){
-            dao = new ResultDao(context);
-        }
-        return dao;
     }
     public static class VH extends RecyclerView.ViewHolder{
         @BindView(R.id.tv_date)  TextView tvDate;

@@ -8,15 +8,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
+import com.icesoft.magnetlinksearch.App;
 import com.icesoft.magnetlinksearch.Constance;
 import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.adapters.FavoriteAdapter;
 import com.icesoft.magnetlinksearch.customs.SpacesItemDecoration;
-import com.icesoft.magnetlinksearch.models.Favorite;
-import com.icesoft.magnetlinksearch.models.Result;
-import com.icesoft.magnetlinksearch.sqlites.ResultDao;
-import com.icesoft.magnetlinksearch.utils.FileUtils;
-import com.icesoft.magnetlinksearch.utils.ViewUtils;
+import com.icesoft.magnetlinksearch.models.Magnet;
+import com.icesoft.magnetlinksearch.sqlites.MagnetDAO;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -31,7 +29,7 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
     @BindView(R.id.recyclerView)
     protected RecyclerView recyclerView;
     private FavoriteAdapter adapter;
-    private ResultDao dao;
+    private MagnetDAO dao;
 
     @BindView(R.id.message)
     TextView message;
@@ -70,7 +68,7 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
 
     @Override
     protected void refreshData() {
-        int total = getDao().count();
+        int total = App.getApp().getDao().count();
         if(total != adapter.getTotal()){
             refreshLayout.autoRefresh();
         }
@@ -89,34 +87,24 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Inprogress,getString(R.string.loading));
-        int total = getDao().count();
+        int total = App.getApp().getDao().count();
         if(total == 0){
             refreshLayout.finishLoadMoreWithNoMoreData();
-            ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Failure,getString(R.string.nodata));
         }else{
-            List<Result> results = getDao().load(Constance.FAVORITE_FROM, Constance.FAVORITE_LIMIT);
+            List<Magnet> results = App.getApp().getDao().load(Constance.FAVORITE_FROM, Constance.FAVORITE_LIMIT);
             adapter.refresh(results,total);
             refreshLayout.finishRefresh(true);
-            ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Success,getString(R.string.loaded));
         }
     }
 
     @Override
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-        List<Result> results = getDao().load(adapter.getFrom(),Constance.FAVORITE_LIMIT);
+        List<Magnet> results = App.getApp().getDao().load(adapter.getFrom(),Constance.FAVORITE_LIMIT);
         if(results != null && results.size()>0){
             adapter.addData(results);
             refreshLayout.finishLoadMore(true);
         }else{
             refreshLayout.finishLoadMoreWithNoMoreData();
         }
-    }
-
-    private ResultDao getDao() {
-        if(null == dao){
-            dao = new ResultDao(context);
-        }
-        return dao;
     }
 }

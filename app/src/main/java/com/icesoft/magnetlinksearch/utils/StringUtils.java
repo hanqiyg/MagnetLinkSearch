@@ -13,4 +13,8 @@ public class StringUtils {
         if(content.length()<10){return null;}
         return content;
     }
+
+    public static String secureKeywords(String keywords) {
+        return keywords;
+    }
 }

@@ -4,27 +4,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import com.icesoft.magnetlinksearch.R;
-import com.icesoft.magnetlinksearch.adapters.ResultAdapter;
+import com.icesoft.magnetlinksearch.adapters.MagnetAdapter;
 import com.icesoft.magnetlinksearch.customs.SpacesItemDecoration;
-import com.icesoft.magnetlinksearch.dos.Response;
-import com.icesoft.magnetlinksearch.dos.SearchFails;
 import com.icesoft.magnetlinksearch.events.QueryEvent;
-import com.icesoft.magnetlinksearch.models.Magnet;
+import com.icesoft.magnetlinksearch.events.SearchFailEvent;
+import com.icesoft.magnetlinksearch.events.SearchSuccessEvent;
 import com.icesoft.magnetlinksearch.utils.ElasticUtils;
-import com.icesoft.magnetlinksearch.utils.ViewUtils;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.List;
 
 public class ResultFragment extends BaseFragment implements OnRefreshListener, OnLoadMoreListener{
     public static final String FRAGMENT_TAG = "ResultFragment";
@@ -39,7 +36,7 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
     ProgressBar progress;
 
     public String q;
-    private ResultAdapter adapter;
+    private MagnetAdapter adapter;
 
     @Override
     int getLayoutResourceID() {
@@ -53,6 +50,7 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
 
     @Override
     void initView() {
+        adapter = new MagnetAdapter(getActivity(),this);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(getResources().getDimensionPixelSize(R.dimen.item_space_left),getResources().getDimensionPixelSize(R.dimen.item_space_top),getResources().getDimensionPixelSize(R.dimen.item_space_right),getResources().getDimensionPixelSize(R.dimen.item_space_bottom)));
@@ -61,7 +59,9 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
     }
 
     @Override
-    void initData() {}
+    void initData() {
+
+    }
 
     @Override
     protected void refreshData() {}
@@ -75,57 +75,33 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
         ElasticUtils.stringSearch(context,q,adapter.getFrom(),10);
     }
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
-    public void onUpdateEvent(Response event){
+    public void onQuery(QueryEvent event){
+        this.q = event.query;
+        refreshLayout.autoRefresh();
         EventBus.getDefault().removeStickyEvent(event);
-        Log.d(FRAGMENT_TAG,event.toString());
-        switch(event.getCode()){
-            case QueryList:{
-                if(event.getPayload()!=null){
-                    refreshLayout.finishRefresh(true);
-                    ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Success,getString(R.string.loaded));
-                } else {
-                    refreshLayout.finishLoadMoreWithNoMoreData();
-                    ViewUtils.setProgress(recyclerView, progress, message, ViewUtils.Status.Failure, getString(R.string.nodata));
-                }
-            }break;
-            case QuerySingle:{
-
-            }break;
-            case ErrorServer:
-            case ErrorUnknow:
-            {
-                refreshLayout.finishRefresh(false);
-                ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Failure,getString(R.string.network_error));
-            }break;
-        }
     }
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
-    public void onUpdateEvent(List<Magnet> magnets){
-        if(magnets.size()>0){
-            adapter.addData(magnets);
-            refreshLayout.finishRefresh(true);
+    public void onSearchSuccessEvent(SearchSuccessEvent event){
+        Log.d(FRAGMENT_TAG, "Update magnets:" + (event==null?0:event.magnets.size()));
+        if(event.magnets != null && event.magnets.size()>0){
+            if(event.refresh){
+                adapter.refresh(event.magnets,event.total);
+                refreshLayout.finishRefresh(true);
+            }else{
+                adapter.addData(event.magnets);
+                refreshLayout.finishLoadMore(true);
+            }
         }else{
             refreshLayout.finishLoadMoreWithNoMoreData();
         }
+        EventBus.getDefault().removeStickyEvent(event);
     }
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
-    public void onUpdateEvent(FailEvent event){
+    public void onSearchFailEvent(SearchFailEvent event){
+        Log.d(FRAGMENT_TAG, "onSearchFailEvent:" + event.toString());
+        Toast.makeText(context, event.toString(), Toast.LENGTH_SHORT).show();
+        refreshLayout.finishLoadMore(false);
         EventBus.getDefault().removeStickyEvent(event);
-        Log.d(FRAGMENT_TAG,event.toString());
-    }
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
-    public void onUpdateEvent(StartEvent event){
-        Log.d(FRAGMENT_TAG,"onStartEvent");
-        EventBus.getDefault().removeStickyEvent(event);
-        Log.d(FRAGMENT_TAG,event.toString());
-        if(event==null){
-            ViewUtils.setProgress(recyclerView,progress,message, ViewUtils.Status.Failure,getString(R.string.nodata));
-        }else{
-            if(q==null || !event.stringQuery.equals(q)){
-                q = event.stringQuery;
-                refreshLayout.autoRefresh();
-            }
-        }
     }
 
     @Override
@@ -139,25 +115,5 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
             fragment.setArguments(bundle);
         }
         return fragment;
-    }
-    public class StartEvent{
-        private String stringQuery;
-        public StartEvent(String stringQuery){
-            this.stringQuery = stringQuery;
-        }
-
-        public String getStringQuery() {
-            return stringQuery;
-        }
-    }
-    public class FailEvent{
-        private String message;
-        public FailEvent(String message){
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
-        }
     }
 }

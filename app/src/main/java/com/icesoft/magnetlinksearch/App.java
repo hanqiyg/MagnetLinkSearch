@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import androidx.multidex.MultiDex;
+import com.icesoft.magnetlinksearch.models.Magnet;
+import com.icesoft.magnetlinksearch.sqlites.MagnetDAO;
 import com.icesoft.magnetlinksearch.utils.ElasticRestClient;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.*;
@@ -12,6 +14,11 @@ import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 
 public class App extends Application {
     private static final String T = "App.class";
+    private MagnetDAO dao;
+    private static App app;
+    public App(){
+        app = this;
+    }
     static {
         //设置全局的Header构建器
         SmartRefreshLayout.setDefaultRefreshHeaderCreator(new DefaultRefreshHeaderCreator() {
@@ -29,6 +36,15 @@ public class App extends Application {
                 return new ClassicsFooter(context).setDrawableSize(20);
             }
         });
+    }
+    public static App getApp(){
+        return app;
+    }
+    public MagnetDAO getDao(){
+        if(dao == null){
+            dao = new MagnetDAO(this);
+        }
+        return dao;
     }
     @Override
     public void onCreate() {

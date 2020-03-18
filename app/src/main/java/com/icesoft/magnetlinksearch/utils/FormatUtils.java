@@ -2,7 +2,7 @@ package com.icesoft.magnetlinksearch.utils;
 
 import android.text.Html;
 import android.text.Spanned;
-import com.icesoft.magnetlinksearch.models.Result;
+import com.icesoft.magnetlinksearch.models.Magnet;
 
 public class FormatUtils {
     //2019-10-13T03:50:18.448786Z
@@ -75,15 +75,15 @@ public class FormatUtils {
     }
     public static final String SHARED_BY    = "magnet search is a simple app.";
     public static final String COPYRIGHT_BY = "copyright belong to the author.";
-    public static String shareText(Result r) {
+    public static String shareText(Magnet r) {
         StringBuffer sb = new StringBuffer();
-        sb.append("magnet: ").append(magnetFromId(r.id)).append("\n\r");
-        sb.append("name:   ").append(r.name)            .append("\n\r");
-        sb.append("size:   ").append(formatSize(r.size)).append("\n\r");
-        sb.append("count:  ").append(r.count)           .append("\n\r");
-        sb.append("update: ").append(r.date)            .append("\n\r");
-        sb.append(SHARED_BY )                           .append("\n\r");
-        sb.append(COPYRIGHT_BY)                         .append("\n\r");
+        sb.append("magnet: ").append(magnetFromId(r.getId())).append("\n\r");
+        sb.append("name:   ").append(r.getName()).append("\n\r");
+        sb.append("size:   ").append(formatSize(r.getLength())).append("\n\r");
+        sb.append("count:  ").append(r.getCount()).append("\n\r");
+        sb.append("update: ").append(r.getTimestamp()).append("\n\r");
+        sb.append(SHARED_BY ).append("\n\r");
+        sb.append(COPYRIGHT_BY).append("\n\r");
         return sb.toString();
     }
 }

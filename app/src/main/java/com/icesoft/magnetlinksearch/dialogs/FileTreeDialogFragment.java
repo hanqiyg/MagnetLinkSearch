@@ -2,15 +2,17 @@ package com.icesoft.magnetlinksearch.dialogs;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.widget.*;
 import butterknife.BindView;
 import com.icesoft.magnetlinksearch.R;
-import com.icesoft.magnetlinksearch.models.Result;
-import com.icesoft.magnetlinksearch.sqlites.ResultDao;
+import com.icesoft.magnetlinksearch.events.FileTreeEvent;
+import com.icesoft.magnetlinksearch.models.Magnet;
 import com.icesoft.magnetlinksearch.utils.ElasticUtils;
+import com.icesoft.magnetlinksearch.utils.TreeUtils;
+import com.unnamed.b.atv.view.AndroidTreeView;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class FileTreeDialogFragment extends BaseDialogFragment {
     public static final String FRAGMENT_TAG = FileTreeDialogFragment.class.getSimpleName();
@@ -39,10 +41,8 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
     TextView message;
     @BindView(R.id.progress)
     ProgressBar progress;
+    Magnet m;
 
-    public Result r;
-
-    ResultDao dao;
     @Override
     int getLayoutResourceID() {
         return R.layout.dialog_info;
@@ -69,30 +69,29 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
             }
         });
     }
-    private Result getResult(Bundle bundle){
+    private Magnet getMagnet(Bundle bundle){
         if(bundle != null){
             String id = bundle.getString(ID);
-            String date = bundle.getString(DATE);
+            String timestamp = bundle.getString(DATE);
             String name = bundle.getString(NAME);
             long size = bundle.getLong(SIZE);
-            long count = bundle.getLong(COUNT);
-            return new Result(id,date,name,size,count);
+            int count = bundle.getInt(COUNT);
+            return new Magnet(id,size,count,null,timestamp);
         }
         return null;
     }
     @Override
     void initData() {
-        r = getResult(bundle);
-        if(r != null) {
-            ElasticUtils.getFilesById(getActivity(),svFiles,r.id);
+        m = getMagnet(bundle);
+        if(m != null) {
+            ElasticUtils.getFilesById(getActivity(),svFiles,m.getId());
         }
     }
-
-    public ResultDao getDao(){
-        if(dao == null){
-            dao = new ResultDao(context);
-        }
-        return dao;
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void onDataSuccess(FileTreeEvent event){
+        AndroidTreeView tree = TreeUtils.getTreeView(getActivity(),event.files);
+        svFiles.addView(tree.getView());
+        EventBus.getDefault().removeStickyEvent(event);
     }
 
     @Override
@@ -102,5 +101,4 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
         fragment.setArguments(bundle);
         return fragment;
     }
-
 }

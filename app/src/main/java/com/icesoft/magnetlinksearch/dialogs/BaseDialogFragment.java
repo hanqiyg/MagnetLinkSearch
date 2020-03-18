@@ -96,7 +96,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
         mLayoutParams.gravity = Gravity.CENTER;
         mLayoutParams.windowAnimations = R.style.BottomDialogAnimation;
         mWindow.setAttributes(mLayoutParams);
-        //EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -130,7 +130,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
     public void onStop() {
         super.onStop();
         Log.d(getName(),"onStop");
-        //EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

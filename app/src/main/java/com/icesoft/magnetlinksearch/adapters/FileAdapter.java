@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.icesoft.magnetlinksearch.R;
-import com.icesoft.magnetlinksearch.models.TFile;
+import com.icesoft.magnetlinksearch.mappers.MFile;
 import com.icesoft.magnetlinksearch.utils.FormatUtils;
 
 
@@ -17,7 +17,7 @@ import java.util.List;
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH>{
     private static final String T = "FileAdapter";
-    private List<TFile> files;
+    private List<MFile> files;
 
     public static class VH extends RecyclerView.ViewHolder{
         @BindView(R.id.tv_name)     TextView name;
@@ -36,9 +36,9 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH>{
     }
     @Override
     public void onBindViewHolder(@NonNull VH v, int position) {
-        TFile file = files.get(position);
-        v.name.setText(file.name);
-        v.length.setText(FormatUtils.formatSize(file.length));
+        MFile file = files.get(position);
+        v.name.setText(file.getName());
+        v.length.setText(FormatUtils.formatSize(file.getLength()));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH>{
         return files==null?0:files.size();
     }
 
-    public void setData(List<TFile> files) {
+    public void setData(List<MFile> files) {
         this.files = files;
         notifyDataSetChanged();
     }
