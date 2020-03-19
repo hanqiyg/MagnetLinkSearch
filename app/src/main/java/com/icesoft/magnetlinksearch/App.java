@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import androidx.multidex.MultiDex;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icesoft.magnetlinksearch.models.Magnet;
 import com.icesoft.magnetlinksearch.sqlites.MagnetDAO;
 import com.icesoft.magnetlinksearch.utils.ElasticRestClient;
@@ -15,6 +16,7 @@ import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 public class App extends Application {
     private static final String T = "App.class";
     private MagnetDAO dao;
+    private ObjectMapper mapper;
     private static App app;
     public App(){
         app = this;
@@ -45,6 +47,12 @@ public class App extends Application {
             dao = new MagnetDAO(this);
         }
         return dao;
+    }
+    public ObjectMapper getMapper(){
+        if(mapper == null){
+            mapper = new ObjectMapper();
+        }
+        return mapper;
     }
     @Override
     public void onCreate() {

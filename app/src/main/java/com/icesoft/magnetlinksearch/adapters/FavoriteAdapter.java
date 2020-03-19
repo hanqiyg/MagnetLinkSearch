@@ -46,19 +46,13 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH>{
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull VH v, int position) {
-        final Magnet r = results.get(position);
-        if(r == null){return;}
-        v.tvName.setText(String.valueOf(r.getName()));
-        v.tvSize.setText(String.valueOf(r.getLength()));
-        v.tvCount.setText(String.valueOf(r.getCount()));
-        v.tvDate.setText(String.valueOf(r.getTimestamp()));
-        ViewUtils.showFav(v.ivFav,r);
-        v.ivShare.setOnClickListener(view -> ViewUtils.share(context,r));
-        v.ivFav.setOnClickListener(view ->  ViewUtils.fav(context,v.ivFav,this,position,r));
-        v.ivFile.setOnClickListener(view -> ViewUtils.file(context,r));
-        v.ivDown.setOnClickListener(view -> ViewUtils.down(context,r));
-        v.tvNo.setText(String.valueOf(position));
-        v.tvTotal.setText(String.valueOf(total));
+        final Magnet m = results.get(position);
+        if(m == null){return;}
+        ViewUtils.setBrif(m,null,v.tvName,v.tvSize,v.tvCount,v.tvDate);
+        ViewUtils.showFav(v.ivFav,App.getApp().getDao().exist(m.getId()));
+        ViewUtils.setFav(m,context,v.ivFav,this,position);
+        ViewUtils.setButton(m,context,v.ivShare,v.ivFile,v.ivDown);
+        ViewUtils.setPage(position,v.tvNo,total,v.tvTotal);
     }
     @Override
     public int getItemCount() {

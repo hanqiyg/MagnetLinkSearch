@@ -6,6 +6,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -30,8 +31,10 @@ public class ResultFragment extends BaseFragment implements OnRefreshListener, O
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
+    @Nullable
     @BindView(R.id.message)
     TextView message;
+    @Nullable
     @BindView(R.id.progress)
     ProgressBar progress;
 

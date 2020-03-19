@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -30,9 +31,10 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
     protected RecyclerView recyclerView;
     private FavoriteAdapter adapter;
     private MagnetDAO dao;
-
+    @Nullable
     @BindView(R.id.message)
     TextView message;
+    @Nullable
     @BindView(R.id.progress)
     ProgressBar progress;
 
@@ -89,7 +91,7 @@ public class FavoriteFragment extends BaseFragment implements OnRefreshListener,
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
         int total = App.getApp().getDao().count();
         if(total == 0){
-            refreshLayout.finishLoadMoreWithNoMoreData();
+            refreshLayout.finishRefreshWithNoMoreData();
         }else{
             List<Magnet> results = App.getApp().getDao().load(Constance.FAVORITE_FROM, Constance.FAVORITE_LIMIT);
             adapter.refresh(results,total);

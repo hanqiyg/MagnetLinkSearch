@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -37,9 +38,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String T = MainActivity.class.getSimpleName();
-    private static final String ADS = "admob";
     private static final String LAST_FRAGMENT_TAG = "LAST_FRAGMENT_TAG";
-    private long back;
 
     protected Unbinder unbinder;
     @BindView(R.id.adView)
@@ -57,7 +56,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.activity_main);
+        //getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
         unbinder = ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -72,9 +73,11 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_search);
         initAds();
         mIntent();
         init(savedInstanceState);
+
     }
     public void initAds(){
         MobileAds.initialize(this);
@@ -186,6 +189,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         tx.show(fragment);
+
         tx.commit();
     }
 

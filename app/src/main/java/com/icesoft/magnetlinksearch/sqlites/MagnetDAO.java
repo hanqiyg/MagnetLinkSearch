@@ -5,12 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Base64;
+import android.util.Log;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icesoft.magnetlinksearch.mappers.MFile;
 import com.icesoft.magnetlinksearch.models.Magnet;
+import com.icesoft.magnetlinksearch.utils.JsonUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,15 +65,7 @@ public class MagnetDAO {
         if(m !=null){
             String name64 = m.getName()!=null?Base64.encodeToString(m.getName().getBytes(), Base64.DEFAULT):"";
             SQLiteDatabase db = helper.getWritableDatabase();
-            String filejson = "";
-            if(m.getFiles()!= null && m.getFiles().size()>0){
-                ObjectMapper map = new ObjectMapper();
-                try{
-                    filejson = map.writeValueAsString(m.getFiles());
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-            }
+            String filejson = JsonUtils.FilesToJsonString(m.getFiles());
             db.beginTransaction();
             db.execSQL("INSERT INTO "+ SQLiteDbHelper.MAGNET_TABLE_NAME +
                     " (" +
@@ -104,6 +98,7 @@ public class MagnetDAO {
         boolean isExist = c.moveToFirst();
         c.close();
         db.close();
+        Log.d(TAG,(isExist?"DoExist:":"NotExist:") + id);
         return isExist;
     }
     public boolean delete(String id){
@@ -126,7 +121,7 @@ public class MagnetDAO {
         return size;
     }
     public List<Magnet> load(int from,int limit){
-        List<Magnet> results = null;
+        List<Magnet> magnets = null;
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor c = db.query(SQLiteDbHelper.MAGNET_TABLE_NAME,
                 new String[]{
@@ -140,7 +135,7 @@ public class MagnetDAO {
                  from + "," + limit);
         ObjectMapper map = new ObjectMapper();
         if(c.moveToFirst()){
-            results = new ArrayList<>();
+            magnets = new ArrayList<>();
             do{
                 String id       = c.getString(c.getColumnIndex(SQLiteDbHelper.MAGNET_ID));
                 String timestamp= c.getString(c.getColumnIndex(SQLiteDbHelper.MAGNET_TIMESTAMP));
@@ -149,18 +144,13 @@ public class MagnetDAO {
                 int count       = c.getInt(c.getColumnIndex(SQLiteDbHelper.MAGNET_FILECOUNT));
                 String json     = c.getString(c.getColumnIndex(SQLiteDbHelper.MAGNET_FILEJSON));
                 String name = new String(Base64.decode(name64.getBytes(), Base64.DEFAULT));
-                List<MFile> files = null;
-                try{
-                    files = map.readValue(json,List.class);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                results.add(new Magnet(id,name,length,count,files,timestamp));
+                List<MFile> files = JsonUtils.JsonStringToFiles(json);
+                magnets.add(new Magnet(id,name,length,count,files,timestamp));
             }while (c.moveToNext());
         }
         c.close();
         db.close();
-        return results;
+        return magnets;
     }
 
     public void clearTable(){

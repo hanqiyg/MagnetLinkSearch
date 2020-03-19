@@ -28,6 +28,18 @@ public class Magnet {
         this.timestamp = timestamp;
     }
 
+    @Override
+    public String toString() {
+        return "Magnet{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", length=" + length +
+                ", count=" + count +
+                ", files=" + files +
+                ", timestamp='" + timestamp + '\'' +
+                '}';
+    }
+
     public String getId() {
         return id;
     }

@@ -1,18 +1,26 @@
 package com.icesoft.magnetlinksearch.dialogs;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import androidx.annotation.Nullable;
 import butterknife.BindView;
+import com.icesoft.magnetlinksearch.App;
 import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.events.FileTreeEvent;
+import com.icesoft.magnetlinksearch.mappers.MFile;
 import com.icesoft.magnetlinksearch.models.Magnet;
 import com.icesoft.magnetlinksearch.utils.ElasticUtils;
+import com.icesoft.magnetlinksearch.utils.JsonUtils;
 import com.icesoft.magnetlinksearch.utils.TreeUtils;
+import com.icesoft.magnetlinksearch.utils.ViewUtils;
 import com.unnamed.b.atv.view.AndroidTreeView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
 
 public class FileTreeDialogFragment extends BaseDialogFragment {
     public static final String FRAGMENT_TAG = FileTreeDialogFragment.class.getSimpleName();
@@ -21,6 +29,7 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
     public static final String NAME = "name";
     public static final String SIZE = "size";
     public static final String COUNT = "count";
+    public static final String FILES = "files";
 
     @BindView(R.id.tv_date)  TextView tvDate;
     @BindView(R.id.tv_name)  TextView tvName;
@@ -37,8 +46,10 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
 
     @BindView(R.id.files)
     ScrollView svFiles;
+    @Nullable
     @BindView(R.id.message)
     TextView message;
+    @Nullable
     @BindView(R.id.progress)
     ProgressBar progress;
     Magnet m;
@@ -70,21 +81,38 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
         });
     }
     private Magnet getMagnet(Bundle bundle){
+        Log.d(FRAGMENT_TAG,bundle.toString());
         if(bundle != null){
             String id = bundle.getString(ID);
             String timestamp = bundle.getString(DATE);
             String name = bundle.getString(NAME);
             long size = bundle.getLong(SIZE);
             int count = bundle.getInt(COUNT);
-            return new Magnet(id,size,count,null,timestamp);
+            String json = bundle.getString(FILES);
+            List<MFile> files = null;
+            if(json != null){files = JsonUtils.JsonStringToFiles(json);}
+            return new Magnet(id,name,size,count,files,timestamp);
         }
         return null;
     }
     @Override
     void initData() {
         m = getMagnet(bundle);
+        Log.d(FRAGMENT_TAG,m.toString());
         if(m != null) {
-            ElasticUtils.getFilesById(getActivity(),svFiles,m.getId());
+            ViewUtils.setBrif(m,null,tvName,tvSize,tvCount,tvDate);
+            ViewUtils.showFav(ivFav, App.getApp().getDao().exist(m.getId()));
+            ViewUtils.setFav(m,context,ivFav,null,0);
+            ViewUtils.setButton(m,context,ivShare,null,ivDown);
+            if(m.getFiles()!=null){
+                Log.d(FRAGMENT_TAG,""+m.getFiles().size());
+                AndroidTreeView tree = TreeUtils.getTreeView(getActivity(),m.getFiles());
+                svFiles.addView(tree.getView());
+            }else{
+                ElasticUtils.getFilesById(getActivity(),m.getId());
+            }
+        }else{
+            //取消等待
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
@@ -92,6 +120,12 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
         AndroidTreeView tree = TreeUtils.getTreeView(getActivity(),event.files);
         svFiles.addView(tree.getView());
         EventBus.getDefault().removeStickyEvent(event);
+    }
+    private void showBrif(Magnet m){
+        tvDate.setText(String.valueOf(m.getTimestamp()));
+        tvCount.setText(String.valueOf(m.getCount()));
+        tvName.setText(String.valueOf(m.getName()));
+        tvSize.setText(String.valueOf(m.getLength()));
     }
 
     @Override

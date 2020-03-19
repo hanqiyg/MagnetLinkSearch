@@ -47,7 +47,7 @@ public class ElasticUtils {
             }
         });
     }
-    public static void getFilesById(final Context context, final ScrollView root, final String id){
+    public static void getFilesById(final Context context, final String id){
         String json = String.format("{\"query\" : {\"match\":{\"_id\":\"%s\"}}}",id);
         ElasticRestClient.post(context,PATH_SEARCH,json,new TextHttpResponseHandler() {
             @Override
@@ -65,7 +65,6 @@ public class ElasticUtils {
                     jsonOnException("getFilesById",context,e);
                 }
                 if(m!=null){
-/*                    */
                     EventBus.getDefault().postSticky(new FileTreeEvent(getFileFromRoot(m)));
                 }
             }
@@ -88,10 +87,22 @@ public class ElasticUtils {
         }
         return new ArrayList<MFile>();
     }
+    /*
+    * {
+        "_source": {
+            "excludes": [ "files" ]
+        },
+        "query" : {
+            "query_string" : { "query" : "test" }
+        },
+        "from" : 0,
+        "size" : 10
+    }
+*/
     public static void stringSearch(final Context context,String keyword, int from, int size){
         Log.d(T,"stringSearch:" + keyword + "from:" + from + "size:" + size);
         @SuppressLint("DefaultLocale")
-        String json = String.format("{\"query\" : {\"query_string\":{\"query\":\"%s\"}},\"from\" : %d , \"size\" : %d}",
+        String json = String.format("{\"_source\": {\"excludes\": [ \"files\" ]},\"query\" : {\"query_string\":{\"query\":\"%s\"}},\"from\" : %d , \"size\" : %d}",
                 keyword,from,size);
         ElasticRestClient.post(context,PATH_SEARCH,json,new TextHttpResponseHandler() {
             @Override
