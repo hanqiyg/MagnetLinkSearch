@@ -36,6 +36,7 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
     @BindView(R.id.tv_size)  TextView tvSize;
     @BindView(R.id.tv_count) TextView tvCount;
 
+    @BindView(R.id.email)   ImageView ivEmail;
     @BindView(R.id.share)   ImageView ivShare;
     @BindView(R.id.fav)     ImageView ivFav;
     @BindView(R.id.down)    ImageView ivDown;
@@ -103,7 +104,7 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
             ViewUtils.setBrif(m,null,tvName,tvSize,tvCount,tvDate);
             ViewUtils.showFav(ivFav, App.getApp().getDao().exist(m.getId()));
             ViewUtils.setFav(m,context,ivFav,null,0);
-            ViewUtils.setButton(m,context,ivShare,null,ivDown);
+            ViewUtils.setButton(m,context,ivShare,null,ivDown,ivEmail);
             if(m.getFiles()!=null){
                 Log.d(FRAGMENT_TAG,""+m.getFiles().size());
                 AndroidTreeView tree = TreeUtils.getTreeView(getActivity(),m.getFiles());

@@ -53,6 +53,15 @@
             android:layout_marginBottom="10dp"
     />
     <ImageView
+            android:id="@+id/email"
+            style="@style/buttons"
+            android:src="@drawable/ic_email_black_24dp"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/share"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+    />
+    <ImageView
             android:id="@+id/share"
             style="@style/buttons"
             android:src="@drawable/ic_textsms_black_24dp"

@@ -48,4 +48,12 @@
     <string name="nav_website">Website</string>
     <string name="total_count">%1$s magnets in our database.</string>
     <string name="MapperError">Mapper Exception: %1$s.</string>
+    <string name="email_subject">[ Magnet Link ] %1$s</string>
+    <string name="email_chooser">Please Select Email App.</string>
+    <string name="email_body_title">Welcome to use Magnet Link Seeker.</string>
+    <string name="email_body_url">LINK:\t\t</string>
+    <string name="email_body_name">NAME:\t\t</string>
+    <string name="email_body_size">SIZE:\t\t</string>
+    <string name="email_body_count">FILES:\t\t</string>
+    <string name="email_body_timestamp">TIME:\t\t</string>
 </resources>

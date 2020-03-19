@@ -51,7 +51,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH>{
         ViewUtils.setBrif(m,null,v.tvName,v.tvSize,v.tvCount,v.tvDate);
         ViewUtils.showFav(v.ivFav,App.getApp().getDao().exist(m.getId()));
         ViewUtils.setFav(m,context,v.ivFav,this,position);
-        ViewUtils.setButton(m,context,v.ivShare,v.ivFile,v.ivDown);
+        ViewUtils.setButton(m,context,v.ivShare,v.ivFile,v.ivDown,v.ivEmail);
         ViewUtils.setPage(position,v.tvNo,total,v.tvTotal);
     }
     @Override
@@ -91,6 +91,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.VH>{
         @BindView(R.id.fav)     ImageView ivFav;
         @BindView(R.id.file)    ImageView ivFile;
         @BindView(R.id.down)    ImageView ivDown;
+        @BindView(R.id.email)   ImageView ivEmail;
 
         @BindView(R.id.no)       TextView tvNo;
         @BindView(R.id.total)   TextView tvTotal;

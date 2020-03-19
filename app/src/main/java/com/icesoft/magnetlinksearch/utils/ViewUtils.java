@@ -73,11 +73,12 @@ public class ViewUtils {
             if(timestamp!=null){timestamp.setText(FormatUtils.formatDate(magnet.getTimestamp()));}
         }
     }
-    public static void setButton(Magnet magnet, Context context,ImageView share,ImageView file,ImageView down){
+    public static void setButton(Magnet magnet, Context context,ImageView share,ImageView file,ImageView down,ImageView email){
         if(magnet!=null){
             if(share!=null) {share.setOnClickListener(v -> share(context,magnet));}
             if(file!=null)  {file.setOnClickListener(v -> file(context,magnet));}
             if(down!=null)  {down.setOnClickListener(v -> down(context,magnet));}
+            if(email!=null) {email.setOnClickListener(v -> EmailUtils.email(context,magnet));}
         }
     }
 
