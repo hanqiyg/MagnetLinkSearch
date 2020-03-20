@@ -74,8 +74,8 @@ public abstract class BaseDialogFragment extends DialogFragment {
         unbinder = ButterKnife.bind(this,rootView);
 
         initAds();
-        initView();
         initData();
+        initView();
         return rootView;
     }
     @Override

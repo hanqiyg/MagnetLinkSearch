@@ -1,10 +1,13 @@
 package com.icesoft.magnetlinksearch;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -27,6 +30,7 @@ import com.icesoft.magnetlinksearch.events.BackPressedEvent;
 import com.icesoft.magnetlinksearch.events.ExitEvent;
 import com.icesoft.magnetlinksearch.events.ShowFragmentEvent;
 import com.icesoft.magnetlinksearch.fragments.*;
+import com.icesoft.magnetlinksearch.utils.BitmapUtils;
 import com.icesoft.magnetlinksearch.utils.ElasticRestClient;
 import com.icesoft.magnetlinksearch.utils.KeybordUtil;
 import org.greenrobot.eventbus.EventBus;
@@ -53,6 +57,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     private InterstitialAd mInterstitialAd;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +82,6 @@ public class MainActivity extends AppCompatActivity
         initAds();
         mIntent();
         init(savedInstanceState);
-
     }
     public void initAds(){
         MobileAds.initialize(this);

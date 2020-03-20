@@ -3,10 +3,10 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
+        android:background="@drawable/bg_gradient_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
-                android:background="@color/item_name_background"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -35,5 +35,10 @@
                         android:layout_marginBottom="4dp"
                 />
         </LinearLayout>
+        <View android:layout_width="match_parent"
+              android:layout_height="1dp"
+              android:background="@drawable/bg_gradient"
+              android:layout_gravity="center_horizontal"
+        />
         <include layout="@layout/include_buttons" />
 </LinearLayout>

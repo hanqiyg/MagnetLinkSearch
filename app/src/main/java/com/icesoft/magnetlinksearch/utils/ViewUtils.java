@@ -16,6 +16,7 @@ import com.icesoft.magnetlinksearch.App;
 import com.icesoft.magnetlinksearch.R;
 import com.icesoft.magnetlinksearch.adapters.FavoriteAdapter;
 import com.icesoft.magnetlinksearch.dialogs.FileTreeDialogFragment;
+import com.icesoft.magnetlinksearch.dialogs.QRCodeDialogFragment;
 import com.icesoft.magnetlinksearch.mappers.MFile;
 import com.icesoft.magnetlinksearch.models.Magnet;
 import cz.msebera.android.httpclient.util.Asserts;
@@ -24,12 +25,12 @@ import java.util.List;
 
 public class ViewUtils {
     public static void share(Context context, Magnet magnet){
-        if(context != null && magnet != null){
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, FormatUtils.shareText(magnet));
-            sendIntent.setType("text/plain");
-            context.startActivity(sendIntent);
+        if(context instanceof AppCompatActivity && magnet != null){
+            Bundle bundle = new Bundle();
+            bundle.putString(QRCodeDialogFragment.ID,magnet.getId());
+            QRCodeDialogFragment dialog = QRCodeDialogFragment.newInstance(bundle);
+            FragmentManager manager = ((AppCompatActivity) context).getSupportFragmentManager();
+            dialog.show(manager,FileTreeDialogFragment.FRAGMENT_TAG);
         }
     }
     public static void file(Context context, Magnet magnet){

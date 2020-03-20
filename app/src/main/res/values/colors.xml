@@ -8,6 +8,4 @@
     <color name="background">#FFFFFF</color>
     <color name="recycler_background">#666666</color>
     <color name="item_name_background">#009999</color>
-    <color name="item_button_background">#FFFFFF</color>
-
 </resources>
