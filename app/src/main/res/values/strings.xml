@@ -1,5 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE resources [
+        <!ENTITY appname "Magnet Link Search">
+        <!ENTITY author "ice">
+        ]>
 <resources>
-    <string name="app_name">Magnet Link Search</string>
+    <string name="app_name">&appname;</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Magnet Link Search</string>
@@ -56,4 +61,5 @@
     <string name="email_body_size">SIZE:\t\t</string>
     <string name="email_body_count">FILES:\t\t</string>
     <string name="email_body_timestamp">TIME:\t\t</string>
+    <string name="short_app_description">QR Code Created by &appname; </string>
 </resources>

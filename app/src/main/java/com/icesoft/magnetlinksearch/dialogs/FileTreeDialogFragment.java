@@ -106,7 +106,8 @@ public class FileTreeDialogFragment extends BaseDialogFragment {
             ViewUtils.setFav(m,context,ivFav,null,0);
             ViewUtils.setButton(m,context,ivShare,null,ivDown,ivEmail);
             if(m.getFiles()!=null){
-                Log.d(FRAGMENT_TAG,""+m.getFiles().size());
+                Log.d(FRAGMENT_TAG,""+m.getId());
+                Log.d(FRAGMENT_TAG,""+m.getFiles());
                 AndroidTreeView tree = TreeUtils.getTreeView(getActivity(),m.getFiles());
                 svFiles.addView(tree.getView());
             }else{

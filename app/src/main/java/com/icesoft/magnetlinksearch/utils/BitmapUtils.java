@@ -6,14 +6,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.RelativeLayout;
-import androidx.annotation.RequiresApi;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -30,7 +28,6 @@ public class BitmapUtils {
     }
     public static Bitmap drawableToBitmap (Drawable drawable) {
         Bitmap bitmap = null;
-
         if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
             if(bitmapDrawable.getBitmap() != null) {
@@ -49,22 +46,19 @@ public class BitmapUtils {
         drawable.draw(canvas);
         return bitmap;
     }
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public static String saveImageToGallery(Context context, Bitmap bmp) {
-        File path = context.getExternalFilesDir("test");
-        Log.d("t",path.toString());
-        String fileName = "Screen_" + System.currentTimeMillis() + ".jpg";
-        File file = new File(path, fileName);
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            fos.flush();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return file.getAbsolutePath();
+    public static Bitmap getBitmapFromView(View view) {
+        Bitmap returnedBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        Drawable bgDrawable =view.getBackground();
+        if (bgDrawable!=null)
+            bgDrawable.draw(canvas);
+        else
+            canvas.drawColor(Color.WHITE);
+        view.draw(canvas);
+        return returnedBitmap;
+    }
+    public static String saveImageToGallery(Context context, Bitmap bitmap,String title,String description){
+        return MediaStore.Images.Media.insertImage(context.getContentResolver(),
+                bitmap ,title , description);
     }
 }

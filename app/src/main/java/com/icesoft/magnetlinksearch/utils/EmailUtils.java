@@ -6,27 +6,25 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 import com.icesoft.magnetlinksearch.R;
-import com.icesoft.magnetlinksearch.mappers.MFile;
 import com.icesoft.magnetlinksearch.models.Magnet;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class EmailUtils {
     private static final String LF = System.getProperty("line.separator");
     public static void email(Context context, String[] tos,String[] ccs,String[] bcs,
             String subject,String body, ArrayList<Uri> uris,String type,String chooser){
         Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        intent.putExtra(Intent.EXTRA_EMAIL, tos);
-        intent.putExtra(Intent.EXTRA_CC, ccs);
-        intent.putExtra(Intent.EXTRA_BCC, bcs);
-        intent.putExtra(Intent.EXTRA_TEXT, body);
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        if(tos != null)     intent.putExtra(Intent.EXTRA_EMAIL, tos);
+        if(ccs != null)     intent.putExtra(Intent.EXTRA_CC, ccs);
+        if(bcs != null)     intent.putExtra(Intent.EXTRA_BCC, bcs);
+        if(body!= null)     intent.putExtra(Intent.EXTRA_TEXT, body);
+        if(subject!= null)  intent.putExtra(Intent.EXTRA_SUBJECT, subject);
 
 /*        ArrayList<Uri> imageUris = new ArrayList<>();
         imageUris.add(Uri.parse("file:///sdcard/Chrysanthemum.jpg"));
         imageUris.add(Uri.parse("file:///sdcard/Desert.jpg"));*/
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        if(uris != null && uris.size()>0) intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
         intent.setType(type);
         Intent.createChooser(intent, chooser);
         try{

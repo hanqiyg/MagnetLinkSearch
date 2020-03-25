@@ -25,7 +25,8 @@ public class QRCodeEncodeTask extends AsyncTask<String, Void, Bitmap> {
         if(listener.get()!=null && listener.get().getContext()!=null){
             Bitmap logoBitmap = BitmapFactory.decodeResource(listener.get().getContext().getResources(), R.mipmap.logo);
             return QRCodeEncoder.syncEncodeQRCode(strings[0], BGAQRCodeUtil.dp2px(listener.get().getContext(),
-                    250), Color.BLACK, Color.WHITE, logoBitmap);
+                    listener.get().getContext().getResources().getDimension(R.dimen.qrcode_width)),
+                    Color.BLACK, Color.WHITE, logoBitmap);
         }
         return null;
     }
@@ -34,7 +35,7 @@ public class QRCodeEncodeTask extends AsyncTask<String, Void, Bitmap> {
     protected void onPostExecute(Bitmap bitmap) {
         if (bitmap != null && listener != null && listener.get()!=null) {
             listener.get().setBitmap(bitmap);
-            Log.d("success","");
+            Log.d("success",bitmap.getWidth() + "," + bitmap.getHeight());
             Toast.makeText(listener.get().getContext(), "生成带logo的英文二维码成功", Toast.LENGTH_SHORT).show();
         } else {
             Log.d("failure","");

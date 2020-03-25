@@ -1,9 +1,12 @@
 package com.icesoft.magnetlinksearch.utils;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,10 +27,15 @@ import cz.msebera.android.httpclient.util.Asserts;
 import java.util.List;
 
 public class ViewUtils {
+    private static final String EMPTY = "";
     public static void share(Context context, Magnet magnet){
         if(context instanceof AppCompatActivity && magnet != null){
             Bundle bundle = new Bundle();
             bundle.putString(QRCodeDialogFragment.ID,magnet.getId());
+            bundle.putString(QRCodeDialogFragment.NAME,magnet.getName());
+            bundle.putLong(QRCodeDialogFragment.SIZE,magnet.getLength());
+            bundle.putInt(QRCodeDialogFragment.COUNT,magnet.getCount());
+            bundle.putString(QRCodeDialogFragment.DATE,magnet.getTimestamp());
             QRCodeDialogFragment dialog = QRCodeDialogFragment.newInstance(bundle);
             FragmentManager manager = ((AppCompatActivity) context).getSupportFragmentManager();
             dialog.show(manager,FileTreeDialogFragment.FRAGMENT_TAG);
@@ -55,8 +63,12 @@ public class ViewUtils {
             Intent intent = new Intent();
             Uri content_url = Uri.parse(FormatUtils.magnetFromId(magnet.getId()));
             intent.setData(content_url);
-            context.startActivity(intent);
-        }
+            try{
+                context.startActivity(intent);
+            }catch (ActivityNotFoundException e){
+                Toast.makeText(context,"No magnet download App found.",Toast.LENGTH_SHORT).show();
+            }
+         }
     }
     public static void showFav(ImageView v, boolean isfav) {
         if(isfav){
@@ -66,13 +78,31 @@ public class ViewUtils {
         }
     }
     public static void setBrif(Magnet magnet, TextView id,TextView name,TextView length, TextView count, TextView timestamp){
-        if(magnet!=null){
-            if(id!=null)    {id.setText(magnet.getId());}
-            if(name!=null)  {name.setText(magnet.getName());}
-            if(length!=null){length.setText(FormatUtils.formatSize(magnet.getLength()));}
-            if(count!=null) {count.setText(String.valueOf(magnet.getCount()));}
-            if(timestamp!=null){timestamp.setText(FormatUtils.formatDate(magnet.getTimestamp()));}
-        }
+        setBrif(magnet.getId(),magnet.getName(),magnet.getLength(),magnet.getCount(),magnet.getTimestamp(),
+                id,name,length,count,timestamp);
+    }
+    public static void setBrif(String idString,String nameString,long len,int cou,String timeString,
+                               TextView id,TextView name,TextView length, TextView count, TextView timestamp){
+        setId(idString,id);
+        setName(nameString,name);
+        setTotalSize(len,length);
+        setTotalCount(cou,count);
+        setTimestamp(timeString,timestamp);
+    }
+    private static void setId(String s,TextView tv){
+        if(tv != null)    {tv.setText(s==null?EMPTY:s);}
+    }
+    private static void setName(String s, TextView tv){
+        if(tv != null){ tv.setText(s==null?EMPTY:s);}
+    }
+    private static void setTotalSize(long length, TextView tv){
+        if(tv != null){ tv.setText(FormatUtils.formatSize(length));}
+    }
+    private static void setTotalCount(long count, TextView tv){
+        if(tv != null){ tv.setText(String.valueOf(count));}
+    }
+    private static void setTimestamp(String s, TextView tv){
+        if(tv != null){ tv.setText(s==null?EMPTY:FormatUtils.formatDate(s));}
     }
     public static void setButton(Magnet magnet, Context context,ImageView share,ImageView file,ImageView down,ImageView email){
         if(magnet!=null){
@@ -82,7 +112,17 @@ public class ViewUtils {
             if(email!=null) {email.setOnClickListener(v -> EmailUtils.email(context,magnet));}
         }
     }
-
+    public static void snapshot(Context context,View view,String title,String description){
+        Bitmap bitmap = BitmapUtils.getBitmapFromView(view);
+        if(bitmap != null){
+            String path = BitmapUtils.saveImageToGallery(context,bitmap,title,description);
+            if(path != null){
+                Toast.makeText(context,"snapshot[" + path +"]",Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(context,"snapshot is not succeeded.",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     public static void setPage(int position, TextView no, int all, TextView to) {
         if(no!=null){no.setText(String.valueOf(position+1));}
         if(to!=null){to.setText(String.valueOf(all));}
