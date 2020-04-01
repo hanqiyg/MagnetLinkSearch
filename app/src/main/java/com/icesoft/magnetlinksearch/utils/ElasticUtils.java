@@ -166,7 +166,7 @@ public class ElasticUtils {
         sb.append("] Response: [");
         sb.append(responseString);
         sb.append("]");
-        Toast.makeText(context,functionName + "[" + statusCode + "]",Toast.LENGTH_LONG).show();
+        //Toast.makeText(context,functionName + "[" + statusCode + "]",Toast.LENGTH_LONG).show();
         Log.d(T,functionName + "-" + sb.toString());
     }
     private static void httpOnSuccess(String functionName, Context context,int statusCode, Header[] headers, String responseString){
@@ -176,11 +176,11 @@ public class ElasticUtils {
         sb.append("] Response: [");
         sb.append(responseString);
         sb.append("]");
-        Toast.makeText(context,functionName + "[" + statusCode + "]",Toast.LENGTH_LONG).show();
+        //Toast.makeText(context,functionName + "[" + statusCode + "]",Toast.LENGTH_LONG).show();
         Log.d(T,functionName + "-" + sb.toString());
     }
     private static void jsonOnException(String functionName,Context context,IOException e){
-        Toast.makeText(context,e.getMessage(),Toast.LENGTH_LONG).show();
+        //Toast.makeText(context,e.getMessage(),Toast.LENGTH_LONG).show();
         Log.d(T,functionName + "-" + e.getMessage());
     }
 }

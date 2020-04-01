@@ -3,6 +3,7 @@ package com.icesoft.magnetlinksearch;
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 import androidx.multidex.MultiDex;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icesoft.magnetlinksearch.models.Magnet;
@@ -18,9 +19,6 @@ public class App extends Application {
     private MagnetDAO dao;
     private ObjectMapper mapper;
     private static App app;
-    public App(){
-        app = this;
-    }
     static {
         //设置全局的Header构建器
         SmartRefreshLayout.setDefaultRefreshHeaderCreator(new DefaultRefreshHeaderCreator() {
@@ -58,6 +56,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         Log.d(T,"onCreate");
+        app = this;
         MultiDex.install(this);
     }
 
@@ -71,5 +70,8 @@ public class App extends Application {
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
         Log.d(T,"onTrimMemory");
+    }
+    public static void toast(String message){
+        Toast.makeText(app,message,Toast.LENGTH_SHORT).show();
     }
 }
